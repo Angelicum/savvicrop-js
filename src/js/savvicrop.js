@@ -9,7 +9,8 @@ var SavviCrop = function(options, element, callback) {
 	var callback = callback || function(){};
 	var defaults = {required:false,
 									minWidth:100,
-									minHeight:100
+									minHeight:100,
+									id: 'real-file'
 									};
 	this.options = $.extend(true, defaults, options);
 
@@ -553,7 +554,7 @@ c += '<div class="cloak sc-spinner"><i class="fa fa-spin fa-refresh"></i></div>'
 c += '<div class="sc-dropzone-msg">';
 c += '<h1><i class="fa fa-arrow-circle-o-down"></i><span class="sc-status">Drag Image Here.</span></h1>';
 c += '<input type="file" class="sc-file-upload" name="ghost-file" readonly="readonly">';
-c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" name="real-file">';
+c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'">';
 c += '</div>';
 c += '</div>';
 
@@ -592,12 +593,4 @@ $(el).html(c);
 	};
 })(jQuery);
 
-$( document ).ready(function() {
-	var args = {
-		required:true,
-		minWidth:300,
-		minHeight:300
-	}
-	$('.savvi-crop').savviCrop(args);
 
-});

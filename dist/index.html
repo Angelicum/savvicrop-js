@@ -16,11 +16,22 @@
 <body>
 
 <form method="POST" action="blarf.php">
+
 <div class="savvi-crop"></div>
 
 <button type="submit">Submit</button>
 </form>
 
-
+<script>
+$( document ).ready(function() {
+  var args = {
+    required:true,
+    minWidth:300,
+    minHeight:300,
+    id:'real-file'
+  }
+  $('.savvi-crop').savviCrop(args);
+});
+</script>
 </body>
 </html>

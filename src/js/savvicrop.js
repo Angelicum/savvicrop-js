@@ -311,7 +311,9 @@ SavviCrop.prototype.restart = function() {
 };
 SavviCrop.prototype.destroy = function() {
 	var self = this;
-	self.$cropper.cropper('destroy');
+	if (self.$cropper.cropper){
+		self.$cropper.cropper('destroy');
+	}
 	$(self.$previewThumb).empty();
 	$(self.$previewCrop).empty();
 	self.$imgarea.empty();
@@ -354,13 +356,14 @@ SavviCrop.prototype.initFile = function(file) {
 			if( !self.created ){
 				self.created = true;
 			}
-			self.initCrop();
-			self.$fileUpload.val("");
 			if( this.naturalWidth < self.MIN_WIDTH || this.naturalHeight < self.MIN_HEIGHT ){
 				//alert("Image Is Waaaay Too Small Man");
 				self.error( 'The image is too small (' + this.naturalWidth + 'x' + this.naturalHeight + '). Minimum required dimensions are ' + self.MIN_WIDTH.toString() + 'x' + self.MIN_HEIGHT.toString());
 				img = null;
 				self.restart();
+			}else{
+				self.initCrop();
+				self.$fileUpload.val("");
 			}
 		}
 		img.src = event.target.result;
@@ -521,7 +524,6 @@ SavviCrop.prototype.createElements = function(el){
 var c = '';
 
 /* Create ToolBar */
-c += '<div class="spinner cloak"></div>';
 c += '<div class="sc-toolbar clearfix">';
 c += '<ul class="pull-left">';
 c += '<li><button data-action="toolbar-rotate-left" data-active="false" title="Rotate Left"><i class="fa fa-fw fa-rotate-left"></i></button></li>';
@@ -541,6 +543,7 @@ c += '</div>';
 
 /* dropzone */
 c += '<div class="sc-dropzone">';
+c += '<div class="cloak sc-spinner"><i class="fa fa-spin fa-refresh"></i></div>';
 c += '<div class="sc-dropzone-msg">';
 c += '<h1><i class="fa fa-arrow-circle-o-down"></i><span class="sc-status">Drag Image Here.</span></h1>';
 c += '<input type="file" class="sc-file-upload" name="ghost-file" readonly="readonly">';

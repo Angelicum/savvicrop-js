@@ -8,15 +8,14 @@ http://caniuse.com/#feat=filereader
 var SavviCrop = function(options, element, callback) {
 	var callback = callback || function(){};
 	var defaults = {required:false,
-									minWidth:100,
-									minHeight:100,
+									minCropSize:[200,200],
 									id: 'real-file'
 									};
 	this.options = $.extend(true, defaults, options);
 
 	this.UPLOAD_URL = '/image-crop';
-	this.MIN_WIDTH = this.options.minWidth;
-	this.MIN_HEIGHT = this.options.minWidth;
+	this.MIN_WIDTH = this.options.minCropSize[0];
+	this.MIN_HEIGHT = this.options.minCropSize[1];
 	this.CROP_DEBUG = false;
 	this.CSS_TRANSITIONS = true;
 	this.DRAGDROP = false;

@@ -26,8 +26,9 @@
 $( document ).ready(function() {
   var args = {
     required:true,
-    minCropSize:[200,200],
-    id:'real-file'
+    minCropSize:[350,200],
+    id:'real-file',
+    cropRatio:'fixed'
   }
   $('.savvi-crop').savviCrop(args);
 });

@@ -9,8 +9,9 @@ var SavviCrop = function(options, element, callback) {
 	var callback = callback || function(){};
 	var defaults = {required:false,
 									minCropSize:[200,200],
-									id: 'real-file'
-									};
+									id: 'real-file',
+									cropRatio:'auto'
+								 };
 	this.options = $.extend(true, defaults, options);
 
 	this.UPLOAD_URL = '/image-crop';
@@ -20,6 +21,10 @@ var SavviCrop = function(options, element, callback) {
 	this.CSS_TRANSITIONS = true;
 	this.DRAGDROP = false;
 	this.ASPECT_RATIO = 'auto';
+
+	if(this.options.cropRatio == 'fixed'){
+		this.ASPECT_RATIO = (this.MIN_WIDTH / this.MIN_HEIGHT);
+	}
 
 	this.createElements(element);
 
@@ -88,6 +93,7 @@ SavviCrop.prototype.hide = function( ele, fade ) {
 		fade = 0;
 	}
 	//$(ele).addClass('cloak');
+
 	$(ele).hide(fade);
 };
 SavviCrop.prototype.error = function( msg ) {
@@ -168,7 +174,7 @@ SavviCrop.prototype.init = function(){
 				case 'toolbar-preview':
 					self.cropPreview();
 				break;
-				case 'toolbar-close-preview':
+				case 'toolbar-preview-close':
 					self.undoPreview();
 				break;
 				case 'toolbar-save':
@@ -403,6 +409,7 @@ SavviCrop.prototype.previewResize = function() {
 	}));
 };
 SavviCrop.prototype.centerPreview = function() {
+	var self = this;
 	var containerHeight = $(self.$workarea).height();
 	var containerWidth = $(self.$workarea).width();
 	var imgH = self.$previewCrop.find('img').height();
@@ -426,11 +433,12 @@ SavviCrop.prototype.initCrop = function() {
 	self.$cropper = $('#img-crop').cropper({
 		aspectRatio: self.ASPECT_RATIO, // 16 / 9,
 		//checkOrientation: false,
-		//minCropBoxWidth: 500,
-		//minCropBoxHeight: 300,
-		//autoCrop: false,
+		minCropBoxWidth: self.MIN_WIDTH,
+		minCropBoxHeight: self.MIN_HEIGHT,
+		//autoCrop: true,
 		//viewMode: 1,
 		zoomable: true,
+		autoCropArea:1,
 		minContainerWidth:300,
 		minContainerHeight:300,
 		minCanvasWidth:300,
@@ -440,52 +448,37 @@ SavviCrop.prototype.initCrop = function() {
 		//preview:'.preview-thumb, .preview-crop',
 		preview:self.$previewThumb,
 		build: function(e) {
+
 			self.undoPreview();
 		},
 		built: function() {
-			var isLoaded = $('.cropper-canvas img').get(0).naturalWidth > 0 ? true : false;
+			var img = self.$el.find('.cropper-canvas img').get(0);
+			var isLoaded = img.naturalWidth > 0 ? true : false;
 			if( isLoaded ){
-				self.cropperReady();
+				self.cropperReady(img);
 			}else{
-				$('.cropper-canvas img').one("load", function() {
-					self.cropperReady();
+				self.$el.find('.cropper-canvas img').one("load", function() {
+					img = self.$el.find('.cropper-canvas img').get(0);
+					self.cropperReady(img);
 				});
 			}
+
 			self.setDragMode( 'move');
 		},
 		cropmove: function(e) {
-			self.setData();
+			//self.setData();
 		},
-		// double up on crop end
 		cropend: function( e ) {
-			self.setData();
+			//self.setData();
 		}
 	});
 };
-SavviCrop.prototype.cropperReady = function() {
+SavviCrop.prototype.cropperReady = function(img) {
 	var self = this;
 	self.hide( self.$spinner, 400 );
 	self.$imgarea.addClass('active');
 	self.show(self.$previewThumb, 400 );
-	self.$cropper.cropper('setData',	{
-		width:self.MIN_WIDTH,
-		height:self.MIN_HEIGHT
-	});
-	//self.$toolbar.fadeIn( 400 );
 	self.show(self.$toolbar, 400 );
-};
-SavviCrop.prototype.setData = function() {
-	var self = this;
-	if(self.ASPECT_RATIO != 'auto'){
-		var data = self.$cropper.cropper('getData', true);
-		if( data.height < self.MIN_HEIGHT ){
-			data.height = self.MIN_HEIGHT;
-		}
-		if( data.width < self.MIN_WIDTH ){
-			data.width = self.MIN_WIDTH;
-		}
-		self.$cropper.cropper('setData', data );
-	}
 };
 SavviCrop.prototype.saveCropped = function(){
 	var self = this;
@@ -537,13 +530,14 @@ c += '<li><button data-action="toolbar-rotate-right" data-active="false" title="
 c += '<li><button data-action="toolbar-zoom-in" data-active="false" title="Zoom In"><i class="fa fa-fw fa-search-plus"></i></button></li>';
 c += '<li><button data-action="toolbar-zoom-out" data-active="false" title="Zoom Out"><i class="fa fa-fw fa-search-minus"></i></button></li>';
 c += '<li><button data-action="toolbar-preview" data-active="false" title="Preview"><i class="fa fa-fw fa-eye"></i></button></li>';
-c += '<li class="cloak"><button data-action="toolbar-close-preview" data-active="false" title="Close Preview"><i class="fa fa-fw fa-eye-slash"></i></button></li>';
+c += '<li class="cloak"><button data-action="toolbar-preview-close" data-active="false" title="Close Preview"><i class="fa fa-fw fa-eye-slash"></i></button></li>';
 c += '<li><button data-action="toolbar-reset" data-active="false" title="Reset"><i class="fa fa-fw fa-ban"></i></button></li>';
 c += '</ul>';
 c += '<ul class="pull-right">';
 c += '<li class="pull-right" ><button data-action="toolbar-save" data-active="false" title="Save Cropped File"><i class="fa fa-fw fa-check-circle txt-success"></i></button></li>';
 c += '<li class="pull-right"><button data-action="toolbar-load" data-active="false" title="Edit Another File"><i class="fa fa-fw fa-image"></i></button></li>';
- c += '<li class="pull-right cloak"><button data-action="toolbar-help-close" data-active="false" title="Close"><i class="fa fa-fw fa-times-circle"></i></button></li>';
+c += '<li class="pull-right"><button data-action="toolbar-help" data-active="false" title="Help"><i class="fa fa-fw fa-info-circle"></i></button></li>';
+c += '<li class="pull-right cloak"><button data-action="toolbar-help-close" data-active="false" title="Close"><i class="fa fa-fw fa-times-circle"></i></button></li>';
 c += '</ul>';
 c += '</div>';
 

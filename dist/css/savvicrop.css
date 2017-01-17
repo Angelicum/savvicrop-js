@@ -3,6 +3,7 @@
   min-height: 200px;
   display: none;
   position: relative;
+  overflow: hidden;
   -webkit-transition: all .3s ease-in-out;
   -moz-transition: all .3s ease-in-out;
   -o-transition: all .3s ease-in-out;
@@ -17,12 +18,12 @@
   background: rgba(0, 0, 0, 0.85);
   z-index: 9999;
   color: #fff;
-  padding: 25px;
+  padding: 0px;
   display: none; }
 
 .sc-help ul {
   margin: 0;
-  padding: 0; }
+  padding: 26px; }
 
 .sc-help ul li {
   list-style-type: none;
@@ -154,18 +155,10 @@
 .sc-img-container {
   margin: 0 auto;
   opacity: 0;
-  -webkit-transition: all .3s ease-in-out;
-  -moz-transition: all .3s ease-in-out;
-  -o-transition: all .3s ease-in-out;
-  transition: all .3s ease-in-out;
   position: relative; }
 
 .sc-img-container.active {
   opacity: 1; }
-
-.sc-img-container img {
-  max-width: 100%;
-  height: auto; }
 
 .sc-preview-thumb {
   max-width: 200px;
@@ -366,12 +359,6 @@ button[disabled]:hover, button.disabled:hover {
   100% {
     transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
     -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); } }
-
-.cropper-container {
-  -webkit-transition: all .3s ease-in-out;
-  -moz-transition: all .3s ease-in-out;
-  -o-transition: all .3s ease-in-out;
-  transition: all .3s ease-in-out; }
 
 .bs-callout {
   padding: 20px;

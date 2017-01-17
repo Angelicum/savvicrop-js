@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git@bitbucket.org:savvior/savviform-js.git"
   },
-  "author": "",
+  "author": "Uncle Duncan",
   "license": "ISC",
   "dependencies": {
     "block-ui": "^2.70.1",

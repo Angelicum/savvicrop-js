@@ -7,19 +7,22 @@ http://caniuse.com/#feat=filereader
 
 var SavviCrop = function(options, element, callback) {
 	var callback = callback || function(){};
-	var defaults = {};
-	var options = $.extend(true, defaults, options);
-
+	var defaults = {required:false};
+	this.options = $.extend(true, defaults, options);
 
 	this.createElements(element);
 
-	this.state = document.getElementById('status');
+	this.$el = $(element);
 	this.$dropzone = $(element).find('.sc-dropzone');
 	this.$cropper = false;
 	this.created = false;
 	this.filename = 'tmp';
+	this.$status = $(element).find('.sc-status');
+	this.$fileUpload = $(element).find('.sc-file-upload');
+	this.$fileData = $(element).find('.sc-file-blob');
 	this.$imgarea = $(element).find('.sc-img-container');
 	this.$help = $(element).find('.sc-help');
+	this.$toolbar = $(element).find('.sc-toolbar');
 	this.$previewWrap = $(element).find('.sc-preview-wrap');
 	this.$previewThumb = $(element).find('.sc-preview-thumb');
 	this.$previewCrop = $(element).find('.sc-preview-crop');
@@ -133,40 +136,13 @@ SavviCrop.prototype.setCropDimensions = function( w, h ){
 };
 SavviCrop.prototype.init = function(){
 	var self = this;
-	/*
-	if (window.FileReader && self.isEventSupported('dragstart') && self.isEventSupported('drop')) {
-		self.DRAGDROP = true;
-	}else{
-		self.hide('.show-modern' );
-		self.hide('.show-legacy');
-		self.hide(self.$dropzone);
-		self.hide('#btn-group');
-		self.error( 'Please upgrade your browser' );
-	}
-	if(self.DRAGDROP){
-		self.show('.show-modern' );
-	}else{
-		self.show('.show-legacy' );
-		self.hide('#drop-zone-content');
-	}
-	if( self.CROP_DEBUG ){
-		if (typeof window.FileReader === 'undefined') {
-			self.state.innerHTML = 'File API & FileReader unavailable';
-		} else {
-			self.state.innerHTML = 'File API & FileReader available';
-		}
-	}
-	*/
 
-	/* Check to see if there is an image loaded first */
-
-
-	$('#toolbar').on('click','button', function( e ) {
+	self.$toolbar.on('click','button', function( e ) {
 		e.preventDefault();
 		if( ! $(this).attr('disable' ) ){
 			var action = $(this).data('action');
 			var active = $(this).data('active');
-			$('#toolbar button').removeClass('active');
+			self.$toolbar.find('button').removeClass('active');
 			switch( action ){
 				case 'toolbar-move':
 					self.setDragMode( 'move');
@@ -218,7 +194,7 @@ SavviCrop.prototype.init = function(){
 		}
 	});
 
-	var input = self.$dropzone.find('input');
+	var input = self.$fileUpload;
 
 	input.on({
 		dragenter : function (e) {
@@ -231,44 +207,27 @@ SavviCrop.prototype.init = function(){
 
 	input.on('change', function (e) {
 		var file = this.files[0] || e.target.files[0];
+		console.log(input.val());
 		self.initFile( file );
 	});
-	/*
-	$('body').on('onCropSubmit', function() {
-		var imageName = $("#image-cropped-filename").val();
-		self.blockUI( 'Saving Image...' );
-		$.post( "http://alexandria.dev/profile/save-photo", { profileImageName: imageName, _token: "PjYU9jgdmamGf45w2TSoP5rzzNmt4LTPu6zYShxg" }, function( data ) {
-			if( data.valid == true ){
-				window.location = "http://alexandria.dev/profile/photo";
-			}else{
-				var msg = "There was a problem saving your profile photo, please try again.";
-				if( data.msg ){
-					msg = data.msg;
-				}
-				self.error( msg );
-				self.unblockUI();
-			}
-		}, "json");
-	});
-	*/
 };
 SavviCrop.prototype.showHelp = function() {
 	var self = this;
 	if( self.$help.data('active') == true ){
 		self.$help.fadeOut( 400 );
 		self.$help.data('active', false );
-		self.hide( $('#toolbar-help-close').parent() );
-		self.show( $('#toolbar-help').parent() );
-		$('#toolbar-help-close').remove('active');
-		$('#toolbar button').removeAttr('disabled');
+		self.hide( self.$el.find('[data-action="toolbar-help-close"]').parent() );
+		self.show( self.$el.find('[data-action="toolbar-help"]').parent() );
+		self.$el.find('[data-action="toolbar-help-close"]').remove('active');
+		self.$toolbar.find('button').removeAttr('disabled');
 	}else{
 		self.$help.fadeIn( 400 );
 		self.$help.data('active', true );
 
-		self.hide( $('#toolbar-help').parent() );
-		self.show( $('#toolbar-help-close').parent() );
-		$('#toolbar-help-close').addClass('active');
-		$('#toolbar button').not( '#toolbar-help-close' ).attr('disabled', true );
+		self.hide( self.$el.find('[data-action="toolbar-help"]').parent() );
+		self.show( self.$el.find('[data-action="toolbar-help-close"]').parent() );
+		self.$el.find('[data-action="toolbar-help-close"]').addClass('active');
+		self.$toolbar.find('button').not('[data-action="toolbar-help-close"]').attr('disabled', true );
 
 	}
 };
@@ -286,7 +245,7 @@ SavviCrop.prototype.cropReplace = function( src ){
 		//$cropper.cropper('replace', src);
 		self.show( '.spinner' );
 		self.$imgarea.removeClass('active');
-		self.hide( '#toolbar');
+		self.hide(self.$toolbar);
 		self.hide(self.$previewThumb);
 		if( self.created ){
 			self.destroy();
@@ -339,13 +298,16 @@ SavviCrop.prototype.restart = function() {
 	var self = this;
 	self.destroy();
 	self.$previewThumb.removeAttr('style');
-	self.hide($('toolbar-load').parent());
-	self.hide($('#toolbar-save').parent());
-	self.hide($('toolbar-load').parent());
+	self.hide(self.$el.find('[data-action="toolbar-load"]').parent());
+	self.hide(self.$el.find('[data-action="toolbar-save"]').parent());
+	self.hide(self.$el.find('[data-action="toolbar-load"]').parent());
 	self.hide(self.$previewWrap);
 	self.hide(self.$workarea);
-	self.hide( '#toolbar');
+	self.hide(self.$toolbar);
 	self.show(self.$dropzone);
+	self.$status.html('Drag Image Here.');
+	self.$fileUpload.val("");
+	self.$dropzone.removeClass('highlight');
 };
 SavviCrop.prototype.destroy = function() {
 	var self = this;
@@ -353,8 +315,8 @@ SavviCrop.prototype.destroy = function() {
 	$(self.$previewThumb).empty();
 	$(self.$previewCrop).empty();
 	self.$imgarea.empty();
-	$('#toolbar button').removeAttr('disabled');
-	$('#toolbar button').removeClass('active');
+	self.$toolbar.find('button').removeAttr('disabled');
+	self.$toolbar.find('button').removeClass('active');
 };
 SavviCrop.prototype.undoPreview = function() {
 	var self = this;
@@ -363,19 +325,19 @@ SavviCrop.prototype.undoPreview = function() {
 	//show( '.cropper-point' );
 	//show( '.cropper-line' );
 	self.show( '.cropper-crop-box');
-	self.show( $('#toolbar-preview').parent() );
+	self.show(self.$el.find('[data-action="toolbar-preview"]').parent() );
 	//show( $('#toolbar-reset').parent() );
-	self.hide( $('#toolbar-preview-close').parent() );
+	self.hide(self.$el.find('[data-action="toolbar-preview-close"]').parent() );
 	$(window).off("resize.savvicrop");
-	$('#toolbar button').removeAttr('disabled');
+	self.$toolbar.find('button').removeAttr('disabled');
 };
 SavviCrop.prototype.cropPreview = function() {
 	var self = this;
 	self.preview();
-	self.hide( $('#toolbar-preview').parent() );
-	self.show( $('#toolbar-preview-close').parent() );
-	$('#toolbar-preview-close').addClass('active');
-	$('#toolbar button').not( '#toolbar-preview-close, #toolbar-save' ).attr('disabled', true );
+	self.hide( self.$el.find('[data-action="toolbar-preview"]').parent() );
+	self.show( self.$el.find('[data-action="toolbar-preview-close"]').parent() );
+	self.$el.find('[data-action="toolbar-preview-close"]').addClass('active');
+	self.$toolbar.find('button').not('[data-action="toolbar-preview-close"], [data-action="toolbar-save"]').attr('disabled', true );
 };
 SavviCrop.prototype.initFile = function(file) {
 	var self = this;
@@ -393,6 +355,7 @@ SavviCrop.prototype.initFile = function(file) {
 				self.created = true;
 			}
 			self.initCrop();
+			self.$fileUpload.val("");
 			if( this.naturalWidth < self.MIN_WIDTH || this.naturalHeight < self.MIN_HEIGHT ){
 				//alert("Image Is Waaaay Too Small Man");
 				self.error( 'The image is too small (' + this.naturalWidth + 'x' + this.naturalHeight + '). Minimum required dimensions are ' + self.MIN_WIDTH.toString() + 'x' + self.MIN_HEIGHT.toString());
@@ -449,8 +412,8 @@ SavviCrop.prototype.initCrop = function() {
 	self.hide(self.$dropzone);
 	self.show(self.$workarea);
 	self.hide('#error');
-	self.show( $('#toolbar-save').parent() );
-	self.show( $('toolbar-load').parent() );
+	self.show( self.$el.find('[data-action="toolbar-save"]').parent() );
+	self.show( self.$el.find('[data-action="toolbar-load"]').parent() );
 	self.$cropper = $('#img-crop').cropper({
 		aspectRatio: self.ASPECT_RATIO, // 16 / 9,
 		//checkOrientation: false,
@@ -499,8 +462,8 @@ SavviCrop.prototype.cropperReady = function() {
 		width:self.MIN_WIDTH,
 		height:self.MIN_HEIGHT
 	});
-	//$('#toolbar').fadeIn( 400 );
-	self.show( '#toolbar', 400 );
+	//self.$toolbar.fadeIn( 400 );
+	self.show(self.$toolbar, 400 );
 };
 SavviCrop.prototype.setData = function() {
 	var self = this;
@@ -518,58 +481,18 @@ SavviCrop.prototype.setData = function() {
 SavviCrop.prototype.saveCropped = function(){
 	var self = this;
 	var blob = self.$cropper.cropper('getCroppedCanvas').toDataURL("image/jpeg",0.9);
-
-};
-SavviCrop.prototype.uploadCropped = function() {
-	/* Revisit this function later. For now we just wanna save to a field */
-	/*
-	var self = this;
-	var formData = new FormData();
-	// Upload cropped image data to server, base64 encoded as jpeg
-	var blob = self.$cropper.cropper('getCroppedCanvas').toDataURL("image/jpeg",0.9);
-	//strip header
-	blob = blob.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
-	self.hide('#error');
-	formData.append('croppedImage', blob);
-	formData.append('filename', filename );
-	formData.append('filewidth', self.MIN_WIDTH );
-	formData.append('fileheight', self.MIN_HEIGHT );
-	formData.append('_token', $("#_token").val() );
-
-	$("#image-cropped-filename").val('');
-	self.blockUI( 'Uploading Image...' );
-	$.ajax({
-		url: self.UPLOAD_URL,
-		method: "POST",
-		data: formData,
-		processData: false,
-		contentType: false,
-		dataType:'json',
-		success: function (data) {
-			if( data.valid == true ){
-				$("#image-cropped-filename").val(data.imageName);
-				self.undoPreview();
-				self.unblockUI();
-				self.onCropSubmit();
-			}else{
-				var msg = "There was a problem, please contact support";
-				if( data.msg ){
-					msg = data.msg;
-				}
-				self.error( msg );
-				self.unblockUI();
-			}
-			// clear out and start over?
-		},
-		error: function () {
-			console.log('Upload error');
-			var msg = "There was a problem, please contact support";
-			self.error( msg );
-			self.undoPreview();
-			self.unblockUI();
-		}
-	});
-	*/
+	this.$fileData.val(blob);
+	self.destroy();
+	self.$previewThumb.removeAttr('style');
+	self.hide(self.$el.find('[data-action="toolbar-load"]').parent());
+	self.hide(self.$el.find('[data-action="toolbar-save"]').parent());
+	self.hide(self.$el.find('[data-action="toolbar-load"]').parent());
+	self.hide(self.$previewWrap);
+	self.hide(self.$workarea);
+	self.hide(self.$toolbar);
+	self.show(self.$dropzone);
+	self.$status.html('Image Attached');
+	self.$fileUpload.val("");
 };
 SavviCrop.prototype.blockUI = function( message ){
 	$.blockUI({
@@ -593,35 +516,35 @@ SavviCrop.prototype.unblockUI = function() {
 	$.unblockUI();
 };
 SavviCrop.prototype.createElements = function(el){
+	var self = this;
 
 var c = '';
 
 /* Create ToolBar */
 c += '<div class="spinner cloak"></div>';
-c += '<div id="status"></div>';
-c += '<div id="toolbar" class="clearfix">';
+c += '<div class="sc-toolbar clearfix">';
 c += '<ul class="pull-left">';
 c += '<li><button data-action="toolbar-rotate-left" data-active="false" title="Rotate Left"><i class="fa fa-fw fa-rotate-left"></i></button></li>';
 c += '<li><button data-action="toolbar-rotate-right" data-active="false" title="Rotate Right"><i class="fa fa-fw fa-rotate-right"></i></button></li>';
 c += '<li><button data-action="toolbar-zoom-in" data-active="false" title="Zoom In"><i class="fa fa-fw fa-search-plus"></i></button></li>';
 c += '<li><button data-action="toolbar-zoom-out" data-active="false" title="Zoom Out"><i class="fa fa-fw fa-search-minus"></i></button></li>';
-c += '<li><button data-action="toolbar-preview" id="toolbar-preview" data-active="false" title="Preview"><i class="fa fa-fw fa-eye"></i></button></li>';
-c += '<li class="cloak"><button id="toolbar-preview-close" data-action="toolbar-close-preview" data-active="false" title="Close Preview"><i class="fa fa-fw fa-eye-slash"></i></button></li>';
-c += '<li><button data-action="toolbar-reset" id="toolbar-reset" data-active="false" title="Reset"><i class="fa fa-fw fa-ban"></i></button></li>';
+c += '<li><button data-action="toolbar-preview" data-active="false" title="Preview"><i class="fa fa-fw fa-eye"></i></button></li>';
+c += '<li class="cloak"><button data-action="toolbar-close-preview" data-active="false" title="Close Preview"><i class="fa fa-fw fa-eye-slash"></i></button></li>';
+c += '<li><button data-action="toolbar-reset" data-active="false" title="Reset"><i class="fa fa-fw fa-ban"></i></button></li>';
 c += '</ul>';
 c += '<ul class="pull-right">';
-c += '<li class="pull-right" ><button data-action="toolbar-save" id="toolbar-save" data-active="false" title="Save Cropped File"><i class="fa fa-fw fa-check-circle txt-success"></i></button></li>';
-c += '<li class="pull-right"><button data-action="toolbar-load" id="toolbar-load" data-active="false" title="Edit Another File"><i class="fa fa-fw fa-image"></i></button></li>';
-c += '<li class="pull-right"><button data-action="toolbar-help" id="toolbar-help" data-active="false" title="Help"><i class="fa fa-fw fa-question-circle"></i></button></li>';
-c += '<li class="pull-right cloak"><button data-action="toolbar-help-close" id="toolbar-help-close" data-active="false" title="Close"><i class="fa fa-fw fa-times-circle"></i></button></li>';
+c += '<li class="pull-right" ><button data-action="toolbar-save" data-active="false" title="Save Cropped File"><i class="fa fa-fw fa-check-circle txt-success"></i></button></li>';
+c += '<li class="pull-right"><button data-action="toolbar-load" data-active="false" title="Edit Another File"><i class="fa fa-fw fa-image"></i></button></li>';
+ c += '<li class="pull-right cloak"><button data-action="toolbar-help-close" data-active="false" title="Close"><i class="fa fa-fw fa-times-circle"></i></button></li>';
 c += '</ul>';
 c += '</div>';
 
 /* dropzone */
 c += '<div class="sc-dropzone">';
 c += '<div class="sc-dropzone-msg">';
-c += '<h1><i class="fa fa-arrow-circle-o-down"></i> Drag Image Here.</h1>';
-c += '<input type="file" id="file" name="file" multiple>';
+c += '<h1><i class="fa fa-arrow-circle-o-down"></i><span class="sc-status">Drag Image Here.</span></h1>';
+c += '<input type="file" class="sc-file-upload" name="ghost-file" readonly="readonly">';
+c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" name="real-file">';
 c += '</div>';
 c += '</div>';
 
@@ -662,7 +585,7 @@ $(el).html(c);
 
 $( document ).ready(function() {
 	var args = {
-		cropDimensions:[200,200]
+		required:true,
 	}
 	$('.savvi-crop').savviCrop(args);
 

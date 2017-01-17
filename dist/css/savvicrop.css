@@ -157,6 +157,10 @@
   opacity: 0;
   position: relative; }
 
+.sc-img-container img {
+  max-width: 100%;
+  height: auto; }
+
 .sc-img-container.active {
   opacity: 1; }
 

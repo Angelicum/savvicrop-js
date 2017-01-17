@@ -7,8 +7,19 @@ http://caniuse.com/#feat=filereader
 
 var SavviCrop = function(options, element, callback) {
 	var callback = callback || function(){};
-	var defaults = {required:false};
+	var defaults = {required:false,
+									minWidth:100,
+									minHeight:100
+									};
 	this.options = $.extend(true, defaults, options);
+
+	this.UPLOAD_URL = '/image-crop';
+	this.MIN_WIDTH = this.options.minWidth;
+	this.MIN_HEIGHT = this.options.minWidth;
+	this.CROP_DEBUG = false;
+	this.CSS_TRANSITIONS = true;
+	this.DRAGDROP = false;
+	this.ASPECT_RATIO = 'auto';
 
 	this.createElements(element);
 
@@ -17,6 +28,8 @@ var SavviCrop = function(options, element, callback) {
 	this.$cropper = false;
 	this.created = false;
 	this.filename = 'tmp';
+	this.$cropperCropBox = $(element).find('.cropper-crop-box');
+	this.$spinner = $(element).find('.sc-spinner');
 	this.$status = $(element).find('.sc-status');
 	this.$fileUpload = $(element).find('.sc-file-upload');
 	this.$fileData = $(element).find('.sc-file-blob');
@@ -27,13 +40,6 @@ var SavviCrop = function(options, element, callback) {
 	this.$previewThumb = $(element).find('.sc-preview-thumb');
 	this.$previewCrop = $(element).find('.sc-preview-crop');
 	this.$workarea = $(element).find('.sc-workarea');
-	this.UPLOAD_URL = '/image-crop';
-	this.MIN_WIDTH = 320;
-	this.MIN_HEIGHT = 110;
-	this.CROP_DEBUG = false;
-	this.CSS_TRANSITIONS = true;
-	this.DRAGDROP = false;
-	this.ASPECT_RATIO = 'auto';
 
 	this.init();
 };
@@ -168,7 +174,7 @@ SavviCrop.prototype.init = function(){
 				case 'toolbar-save':
 					//show( '.cropper-point' );
 					//show( '.cropper-line' );
-					self.show( '.cropper-crop-box');
+					self.show( self.$cropperCropBox);
 					self.saveCropped();
 				break;
 				case 'toolbar-load':
@@ -207,7 +213,6 @@ SavviCrop.prototype.init = function(){
 
 	input.on('change', function (e) {
 		var file = this.files[0] || e.target.files[0];
-		console.log(input.val());
 		self.initFile( file );
 	});
 };
@@ -243,7 +248,7 @@ SavviCrop.prototype.cropReplace = function( src ){
 	var self = this;
 	if( self.$cropper != null ){
 		//$cropper.cropper('replace', src);
-		self.show( '.spinner' );
+		self.show(self.$spinner);
 		self.$imgarea.removeClass('active');
 		self.hide(self.$toolbar);
 		self.hide(self.$previewThumb);
@@ -292,7 +297,7 @@ SavviCrop.prototype.reset = function() {
 	self.hide(self.$previewWrap);
 	//show( '.cropper-point' );
 	//show( '.cropper-line' );
-	self.show( '.cropper-crop-box');
+	self.show( self.$cropperCropBox);
 };
 SavviCrop.prototype.restart = function() {
 	var self = this;
@@ -304,6 +309,7 @@ SavviCrop.prototype.restart = function() {
 	self.hide(self.$previewWrap);
 	self.hide(self.$workarea);
 	self.hide(self.$toolbar);
+	self.$spinner.fadeOut(100);
 	self.show(self.$dropzone);
 	self.$status.html('Drag Image Here.');
 	self.$fileUpload.val("");
@@ -326,7 +332,7 @@ SavviCrop.prototype.undoPreview = function() {
 	self.hide(self.$previewWrap);
 	//show( '.cropper-point' );
 	//show( '.cropper-line' );
-	self.show( '.cropper-crop-box');
+	self.show( self.$cropperCropBox);
 	self.show(self.$el.find('[data-action="toolbar-preview"]').parent() );
 	//show( $('#toolbar-reset').parent() );
 	self.hide(self.$el.find('[data-action="toolbar-preview-close"]').parent() );
@@ -388,7 +394,7 @@ SavviCrop.prototype.preview = function() {
 	img.src = blob;
 	self.$previewCrop.append( img );
 	self.show(self.$previewWrap);
-	self.hide( '.cropper-crop-box');
+	self.hide( self.$cropperCropBox);
 };
 SavviCrop.prototype.previewResize = function() {
 	var self = this;
@@ -407,7 +413,7 @@ SavviCrop.prototype.centerPreview = function() {
 SavviCrop.prototype.preInitCrop = function() {
 	var self = this;
 	self.hide(self.$dropzone);
-	self.show( '.spinner');
+	self.show(self.$spinner);
 	self.show(self.$workarea);
 };
 SavviCrop.prototype.initCrop = function() {
@@ -458,7 +464,7 @@ SavviCrop.prototype.initCrop = function() {
 };
 SavviCrop.prototype.cropperReady = function() {
 	var self = this;
-	self.hide( '.spinner', 400 );
+	self.hide( self.$spinner, 400 );
 	self.$imgarea.addClass('active');
 	self.show(self.$previewThumb, 400 );
 	self.$cropper.cropper('setData',	{
@@ -589,6 +595,8 @@ $(el).html(c);
 $( document ).ready(function() {
 	var args = {
 		required:true,
+		minWidth:300,
+		minHeight:300
 	}
 	$('.savvi-crop').savviCrop(args);
 

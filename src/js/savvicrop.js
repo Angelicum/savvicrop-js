@@ -473,6 +473,19 @@ SavviCrop.prototype.initCrop = function() {
 		}
 	});
 };
+SavviCrop.prototype.setData = function() {
+	var self = this;
+	if(self.ASPECT_RATIO != 'auto'){
+		var data = self.$cropper.cropper('getData', true);
+		if( data.height < self.MIN_HEIGHT ){
+			data.height = self.MIN_HEIGHT;
+		}
+		if( data.width < self.MIN_WIDTH ){
+			data.width = self.MIN_WIDTH;
+		}
+		self.$cropper.cropper('setData', data );
+	}
+};
 SavviCrop.prototype.cropperReady = function(img) {
 	var self = this;
 	self.hide( self.$spinner, 400 );
@@ -496,6 +509,7 @@ SavviCrop.prototype.saveCropped = function(){
 	self.$status.html('Image Attached');
 	self.$fileUpload.val("");
 };
+
 SavviCrop.prototype.blockUI = function( message ){
 	$.blockUI({
 		fadeOut:	400,

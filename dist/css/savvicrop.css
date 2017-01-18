@@ -123,6 +123,13 @@
 .sc-dropzone.highlight i {
   color: #008800; }
 
+.sc-dropzone.error {
+  border: 2px dashed #880000; }
+
+.sc-dropzone.error h1,
+.sc-dropzone.error i {
+  color: #880000; }
+
 .sc-file-upload {
   width: 100%;
   height: 100%;

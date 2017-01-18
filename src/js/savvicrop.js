@@ -35,7 +35,6 @@ var SavviCrop = function(options, element, callback) {
 	this.filename = 'tmp';
 	this.$cropperCropBox = $(element).find('.cropper-crop-box');
 	this.$spinner = $(element).find('.sc-spinner');
-	this.$status = $(element).find('.sc-status');
 	this.$fileUpload = $(element).find('.sc-file-upload');
 	this.$fileData = $(element).find('.sc-file-blob');
 	this.$imgarea = $(element).find('.sc-img-container');
@@ -210,10 +209,10 @@ SavviCrop.prototype.init = function(){
 
 	input.on({
 		dragenter : function (e) {
-			self.$dropzone.addClass('highlight');
+			self.updateStatus('success','Drop Image Here.');
 		},
 		dragleave : function (e) { //function for dragging out of element
-			self.$dropzone.removeClass('highlight');
+			self.updateStatus('default','Drag Image Here.');
 		}
 	});
 
@@ -304,6 +303,7 @@ SavviCrop.prototype.reset = function() {
 	//show( '.cropper-point' );
 	//show( '.cropper-line' );
 	self.show( self.$cropperCropBox);
+	self.updateStatus('default','Drag Image Here.');
 };
 SavviCrop.prototype.restart = function() {
 	var self = this;
@@ -317,7 +317,7 @@ SavviCrop.prototype.restart = function() {
 	self.hide(self.$toolbar);
 	self.$spinner.fadeOut(100);
 	self.show(self.$dropzone);
-	self.$status.html('Drag Image Here.');
+
 	self.$fileUpload.val("");
 	self.$dropzone.removeClass('highlight');
 };
@@ -331,6 +331,7 @@ SavviCrop.prototype.destroy = function() {
 	self.$imgarea.empty();
 	self.$toolbar.find('button').removeAttr('disabled');
 	self.$toolbar.find('button').removeClass('active');
+
 };
 SavviCrop.prototype.undoPreview = function() {
 	var self = this;
@@ -369,8 +370,7 @@ SavviCrop.prototype.initFile = function(file) {
 				self.created = true;
 			}
 			if( this.naturalWidth < self.MIN_WIDTH || this.naturalHeight < self.MIN_HEIGHT ){
-				//alert("Image Is Waaaay Too Small Man");
-				self.error( 'The image is too small (' + this.naturalWidth + 'x' + this.naturalHeight + '). Minimum required dimensions are ' + self.MIN_WIDTH.toString() + 'x' + self.MIN_HEIGHT.toString());
+				self.updateStatus('error','Image is too small: (' + this.naturalWidth + 'x' + this.naturalHeight + '). Required minimum dimensions: (' + self.MIN_WIDTH.toString() + 'x' + self.MIN_HEIGHT.toString()+').');
 				img = null;
 				self.restart();
 			}else{
@@ -491,7 +491,6 @@ SavviCrop.prototype.setData = function() {
 			data.width = self.MIN_WIDTH;
 		}
 		self.$cropper.cropper('setData', data );
-		console.log(data.width,data.height);
 	}
 };
 SavviCrop.prototype.cropperReady = function(img) {
@@ -501,8 +500,29 @@ SavviCrop.prototype.cropperReady = function(img) {
 	self.show(self.$previewThumb, 400 );
 	self.show(self.$toolbar, 400 );
 };
+
+SavviCrop.prototype.updateStatus = function(type,message){
+	var self = this;
+	var messageArea = self.$el.find('.sc-status');
+	switch(type){
+		case 'default':
+			self.$dropzone.removeClass('error');
+			self.$dropzone.removeClass('highlight');
+			break;
+		case 'success':
+			self.$dropzone.removeClass('error');
+			self.$dropzone.addClass('highlight');
+			break;
+		case 'error':
+			self.$dropzone.addClass('error');
+			self.$dropzone.removeClass('highlight');
+	}
+	messageArea.html(message);
+}
 SavviCrop.prototype.saveCropped = function(){
 	var self = this;
+
+	/* Enforce min and max image size here */
 	var canvas = self.$cropper.cropper('getCroppedCanvas');
 	var canvasArgs = {width:canvas.width,
 										height:canvas.height};
@@ -513,9 +533,8 @@ SavviCrop.prototype.saveCropped = function(){
 		canvasArgs.width = self.MIN_WIDTH;
 	}
 	var canvas = self.$cropper.cropper('getCroppedCanvas',canvasArgs);
-	console.log(canvas);
 	var blob = canvas.toDataURL("image/jpeg",0.9);
-	console.log(blob);
+	var imgArea = self.$el.find('.sc-image-area');
 	self.$fileData.val(blob);
 	self.destroy();
 	self.$previewThumb.removeAttr('style');
@@ -526,88 +545,65 @@ SavviCrop.prototype.saveCropped = function(){
 	self.hide(self.$workarea);
 	self.hide(self.$toolbar);
 	self.show(self.$dropzone);
-	self.$status.html('Image Attached');
+	self.updateStatus('success','Image Attached');
+	//imgArea.html('<img style="vertical-align:middle; display:inline-block;" height="50" src="'+blob+'" />');
 	self.$fileUpload.val("");
 };
 
-SavviCrop.prototype.blockUI = function( message ){
-	$.blockUI({
-		fadeOut:	400,
-		fadeIn: 200,
-		baseZ: 99999,
-		message: message,
-		css: {
-			border: 'none',
-			padding: '15px',
-			backgroundColor: '#000',
-			'-webkit-border-radius': '5px',
-			'-moz-border-radius': '5px',
-			'border-radius': '5px',
-			opacity: .5,
-			color: '#fff'
-	 }
-	});
-};
-SavviCrop.prototype.unblockUI = function() {
-	$.unblockUI();
-};
 SavviCrop.prototype.createElements = function(el){
 	var self = this;
+	var c = '';
+	/* Create ToolBar */
+	c += '<div class="sc-toolbar clearfix">';
+	c += '<ul class="pull-left">';
+	c += '<li><button data-action="toolbar-rotate-left" data-active="false" title="Rotate Left"><i class="fa fa-fw fa-rotate-left"></i></button></li>';
+	c += '<li><button data-action="toolbar-rotate-right" data-active="false" title="Rotate Right"><i class="fa fa-fw fa-rotate-right"></i></button></li>';
+	c += '<li><button data-action="toolbar-zoom-in" data-active="false" title="Zoom In"><i class="fa fa-fw fa-search-plus"></i></button></li>';
+	c += '<li><button data-action="toolbar-zoom-out" data-active="false" title="Zoom Out"><i class="fa fa-fw fa-search-minus"></i></button></li>';
+	c += '<li><button data-action="toolbar-preview" data-active="false" title="Preview"><i class="fa fa-fw fa-eye"></i></button></li>';
+	c += '<li class="cloak"><button data-action="toolbar-preview-close" data-active="false" title="Close Preview"><i class="fa fa-fw fa-eye-slash"></i></button></li>';
+	c += '<li><button data-action="toolbar-reset" data-active="false" title="Reset"><i class="fa fa-fw fa-ban"></i></button></li>';
+	c += '</ul>';
+	c += '<ul class="pull-right">';
+	c += '<li class="pull-right" ><button data-action="toolbar-save" data-active="false" title="Save Cropped File"><i class="fa fa-fw fa-check-circle txt-success"></i></button></li>';
+	c += '<li class="pull-right"><button data-action="toolbar-load" data-active="false" title="Edit Another File"><i class="fa fa-fw fa-image"></i></button></li>';
+	c += '<li class="pull-right"><button data-action="toolbar-help" data-active="false" title="Help"><i class="fa fa-fw fa-info-circle"></i></button></li>';
+	c += '<li class="pull-right cloak"><button data-action="toolbar-help-close" data-active="false" title="Close"><i class="fa fa-fw fa-times-circle"></i></button></li>';
+	c += '</ul>';
+	c += '</div>';
 
-var c = '';
+	/* dropzone */
+	c += '<div class="sc-dropzone">';
+	c += '<div class="cloak sc-spinner"><i class="fa fa-spin fa-refresh"></i></div>';
+	c += '<div class="sc-dropzone-msg">';
+	c += '<h1><span class="sc-image-area"></span><i class="fa fa-arrow-circle-o-down"></i><span class="sc-status">Drag Image Here.</span></h1>';
+	c += '<input type="file" class="sc-file-upload" name="ghost-file" readonly="readonly">';
+	c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'">';
+	c += '</div>';
+	c += '</div>';
 
-/* Create ToolBar */
-c += '<div class="sc-toolbar clearfix">';
-c += '<ul class="pull-left">';
-c += '<li><button data-action="toolbar-rotate-left" data-active="false" title="Rotate Left"><i class="fa fa-fw fa-rotate-left"></i></button></li>';
-c += '<li><button data-action="toolbar-rotate-right" data-active="false" title="Rotate Right"><i class="fa fa-fw fa-rotate-right"></i></button></li>';
-c += '<li><button data-action="toolbar-zoom-in" data-active="false" title="Zoom In"><i class="fa fa-fw fa-search-plus"></i></button></li>';
-c += '<li><button data-action="toolbar-zoom-out" data-active="false" title="Zoom Out"><i class="fa fa-fw fa-search-minus"></i></button></li>';
-c += '<li><button data-action="toolbar-preview" data-active="false" title="Preview"><i class="fa fa-fw fa-eye"></i></button></li>';
-c += '<li class="cloak"><button data-action="toolbar-preview-close" data-active="false" title="Close Preview"><i class="fa fa-fw fa-eye-slash"></i></button></li>';
-c += '<li><button data-action="toolbar-reset" data-active="false" title="Reset"><i class="fa fa-fw fa-ban"></i></button></li>';
-c += '</ul>';
-c += '<ul class="pull-right">';
-c += '<li class="pull-right" ><button data-action="toolbar-save" data-active="false" title="Save Cropped File"><i class="fa fa-fw fa-check-circle txt-success"></i></button></li>';
-c += '<li class="pull-right"><button data-action="toolbar-load" data-active="false" title="Edit Another File"><i class="fa fa-fw fa-image"></i></button></li>';
-c += '<li class="pull-right"><button data-action="toolbar-help" data-active="false" title="Help"><i class="fa fa-fw fa-info-circle"></i></button></li>';
-c += '<li class="pull-right cloak"><button data-action="toolbar-help-close" data-active="false" title="Close"><i class="fa fa-fw fa-times-circle"></i></button></li>';
-c += '</ul>';
-c += '</div>';
-
-/* dropzone */
-c += '<div class="sc-dropzone">';
-c += '<div class="cloak sc-spinner"><i class="fa fa-spin fa-refresh"></i></div>';
-c += '<div class="sc-dropzone-msg">';
-c += '<h1><i class="fa fa-arrow-circle-o-down"></i><span class="sc-status">Drag Image Here.</span></h1>';
-c += '<input type="file" class="sc-file-upload" name="ghost-file" readonly="readonly">';
-c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'">';
-c += '</div>';
-c += '</div>';
-
-c += '<div class="sc-workarea">';
-c += '<div class="sc-help">';
-c += '<ul>';
-c += '<li><i class="fa fa-fw fa-rotate-left"></i> Rotate Image Left</li>';
-c += '<li><i class="fa fa-fw fa-rotate-right"></i> Rotate Image Right</li>';
-c += '<li><i class="fa fa-fw fa-search-plus"></i> Zoom In</li>';
-c += '<li><i class="fa fa-fw fa-search-minus"></i> Zoom Out</li>';
-c += '<li><i class="fa fa-fw fa-eye"></i> Preview Crop</li>';
-c += '<li><i class="fa fa-fw fa-eye-slash"></i> Close Preview</li>';
-c += '<li><i class="fa fa-fw fa-ban"></i> Reset Crop</li>';
-c += '<li><i class="fa fa-fw fa-check-circle txt-success"></i> Save Cropped Image</li>';
-c += '<li><i class="fa fa-fw fa-image"></i> Edit Another File</li>';
-c += '</ul>';
-c += '</div>';
-c += '<div class="sc-preview-thumb"></div>';
-c += '<div class="sc-preview-wrap cloak">';
-c += '<div class="sc-preview-crop"></div>';
-c += '</div>';
-c += '<div class="sc-img-container">';
-c += '</div>';
-c += '</div>';
-
-$(el).html(c);
+	c += '<div class="sc-workarea">';
+	c += '<div class="sc-help">';
+	c += '<ul>';
+	c += '<li><i class="fa fa-fw fa-rotate-left"></i> Rotate Image Left</li>';
+	c += '<li><i class="fa fa-fw fa-rotate-right"></i> Rotate Image Right</li>';
+	c += '<li><i class="fa fa-fw fa-search-plus"></i> Zoom In</li>';
+	c += '<li><i class="fa fa-fw fa-search-minus"></i> Zoom Out</li>';
+	c += '<li><i class="fa fa-fw fa-eye"></i> Preview Crop</li>';
+	c += '<li><i class="fa fa-fw fa-eye-slash"></i> Close Preview</li>';
+	c += '<li><i class="fa fa-fw fa-ban"></i> Reset Crop</li>';
+	c += '<li><i class="fa fa-fw fa-check-circle txt-success"></i> Save Cropped Image</li>';
+	c += '<li><i class="fa fa-fw fa-image"></i> Edit Another File</li>';
+	c += '</ul>';
+	c += '</div>';
+	c += '<div class="sc-preview-thumb"></div>';
+	c += '<div class="sc-preview-wrap cloak">';
+	c += '<div class="sc-preview-crop"></div>';
+	c += '</div>';
+	c += '<div class="sc-img-container">';
+	c += '</div>';
+	c += '</div>';
+	$(el).html(c);
 
 };
 /* Turn that dingle into a jquery plugin */

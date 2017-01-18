@@ -262,7 +262,7 @@ SavviCrop.prototype.cropReplace = function( src ){
 			self.destroy();
 		}
 		var img = new Image();
-		img.id = 'img-crop';
+		img.id = 'img-crop-'+self.options.id;
 		img.onload = function() {
 			self.$imgarea.empty();
 			self.$imgarea.append( img );
@@ -359,7 +359,7 @@ SavviCrop.prototype.initFile = function(file) {
 	self.preInitCrop();
 	reader.onload = function (event) {
 		var img = new Image();
-		img.id = 'img-crop';
+		img.id = 'img-crop-'+self.options.id;
 		img.onload = function() {
 			if( self.created ){
 				self.destroy();
@@ -430,23 +430,24 @@ SavviCrop.prototype.initCrop = function() {
 	self.hide('#error');
 	self.show( self.$el.find('[data-action="toolbar-save"]').parent() );
 	self.show( self.$el.find('[data-action="toolbar-load"]').parent() );
-	self.$cropper = $('#img-crop').cropper({
+	self.$cropper = $('#img-crop-'+self.options.id).cropper({
 		aspectRatio: self.ASPECT_RATIO, // 16 / 9,
 		//checkOrientation: false,
-		minCropBoxWidth: self.MIN_WIDTH,
-		minCropBoxHeight: self.MIN_HEIGHT,
+		//minCropBoxWidth: self.MIN_WIDTH,
+		//minCropBoxHeight: self.MIN_HEIGHT,
 		//autoCrop: true,
 		//viewMode: 1,
 		zoomable: true,
 		autoCropArea:1,
-		minContainerWidth:300,
-		minContainerHeight:300,
-		minCanvasWidth:300,
-		minCanvasHeight:300,
+		minContainerWidth:100,
+		minContainerHeight:100,
+		minCanvasWidth:self.MIN_WIDTH,
+		minCanvasHeight:self.MIN_HEIGHT,
 		scalable: false,
 		movable: true,
 		//preview:'.preview-thumb, .preview-crop',
 		preview:self.$previewThumb,
+		restore:false,
 		build: function(e) {
 
 			self.undoPreview();
@@ -465,11 +466,17 @@ SavviCrop.prototype.initCrop = function() {
 
 			self.setDragMode( 'move');
 		},
+		cropstart: function(e){
+			self.setData();
+		},
 		cropmove: function(e) {
-			//self.setData();
+			self.setData();
 		},
 		cropend: function( e ) {
-			//self.setData();
+			self.setData();
+		},
+		zoom: function(e){
+			self.setData();
 		}
 	});
 };
@@ -484,6 +491,7 @@ SavviCrop.prototype.setData = function() {
 			data.width = self.MIN_WIDTH;
 		}
 		self.$cropper.cropper('setData', data );
+		console.log(data.width,data.height);
 	}
 };
 SavviCrop.prototype.cropperReady = function(img) {

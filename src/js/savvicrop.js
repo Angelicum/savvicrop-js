@@ -433,16 +433,16 @@ SavviCrop.prototype.initCrop = function() {
 	self.$cropper = $('#img-crop-'+self.options.id).cropper({
 		aspectRatio: self.ASPECT_RATIO, // 16 / 9,
 		//checkOrientation: false,
-		//minCropBoxWidth: self.MIN_WIDTH,
-		//minCropBoxHeight: self.MIN_HEIGHT,
+		minCropBoxWidth: 50,
+		minCropBoxHeight: 50,
 		//autoCrop: true,
 		//viewMode: 1,
 		zoomable: true,
 		autoCropArea:1,
-		minContainerWidth:100,
-		minContainerHeight:100,
-		minCanvasWidth:self.MIN_WIDTH,
-		minCanvasHeight:self.MIN_HEIGHT,
+		//minContainerWidth:100,
+		//minContainerHeight:100,
+		//minCanvasWidth:self.MIN_WIDTH,
+		//minCanvasHeight:self.MIN_HEIGHT,
 		scalable: false,
 		movable: true,
 		//preview:'.preview-thumb, .preview-crop',
@@ -467,16 +467,16 @@ SavviCrop.prototype.initCrop = function() {
 			self.setDragMode( 'move');
 		},
 		cropstart: function(e){
-			self.setData();
+			//self.setData();
 		},
 		cropmove: function(e) {
-			self.setData();
+			//self.setData();
 		},
 		cropend: function( e ) {
-			self.setData();
+			//self.setData();
 		},
 		zoom: function(e){
-			self.setData();
+			//self.setData();
 		}
 	});
 };
@@ -503,8 +503,20 @@ SavviCrop.prototype.cropperReady = function(img) {
 };
 SavviCrop.prototype.saveCropped = function(){
 	var self = this;
-	var blob = self.$cropper.cropper('getCroppedCanvas').toDataURL("image/jpeg",0.9);
-	this.$fileData.val(blob);
+	var canvas = self.$cropper.cropper('getCroppedCanvas');
+	var canvasArgs = {width:canvas.width,
+										height:canvas.height};
+	if( canvas.height < self.MIN_HEIGHT ){
+		canvasArgs.height = self.MIN_HEIGHT;
+	}
+	if( canvas.width < self.MIN_WIDTH ){
+		canvasArgs.width = self.MIN_WIDTH;
+	}
+	var canvas = self.$cropper.cropper('getCroppedCanvas',canvasArgs);
+	console.log(canvas);
+	var blob = canvas.toDataURL("image/jpeg",0.9);
+	console.log(blob);
+	self.$fileData.val(blob);
 	self.destroy();
 	self.$previewThumb.removeAttr('style');
 	self.hide(self.$el.find('[data-action="toolbar-load"]').parent());

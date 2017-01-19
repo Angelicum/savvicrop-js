@@ -36,6 +36,7 @@ var SavviCrop = function(options, element, callback) {
 	this.$cropperCropBox = $(element).find('.cropper-crop-box');
 	this.$spinner = $(element).find('.sc-spinner');
 	this.$fileUpload = $(element).find('.sc-file-upload');
+	this.$uploadPreview = $(element).find('.sc-upload-thumb');
 	this.$fileData = $(element).find('.sc-file-blob');
 	this.$imgarea = $(element).find('.sc-img-container');
 	this.$help = $(element).find('.sc-help');
@@ -317,10 +318,14 @@ SavviCrop.prototype.restart = function() {
 	self.hide(self.$toolbar);
 	self.$spinner.fadeOut(100);
 	self.show(self.$dropzone);
-
-	self.$fileUpload.val("");
-	self.$dropzone.removeClass('highlight');
+	self.resetUpload();
 };
+SavviCrop.prototype.resetUpload = function() {
+	var self = this;
+	self.$fileUpload.val("");
+	self.$uploadPreview.css('background-image','none');
+	self.$fileData.val("");
+}
 SavviCrop.prototype.destroy = function() {
 	var self = this;
 	if (self.$cropper.cropper){
@@ -331,7 +336,6 @@ SavviCrop.prototype.destroy = function() {
 	self.$imgarea.empty();
 	self.$toolbar.find('button').removeAttr('disabled');
 	self.$toolbar.find('button').removeClass('active');
-
 };
 SavviCrop.prototype.undoPreview = function() {
 	var self = this;
@@ -548,12 +552,26 @@ SavviCrop.prototype.saveCropped = function(){
 	self.updateStatus('success','Image Attached');
 	//imgArea.html('<img style="vertical-align:middle; display:inline-block;" height="50" src="'+blob+'" />');
 	self.$fileUpload.val("");
+	self.$uploadPreview.css('background-image','url("'+blob+'")');
 };
 
 SavviCrop.prototype.createElements = function(el){
 	var self = this;
 	var c = '';
 	/* Create ToolBar */
+	/* dropzone */
+	c += '<div class="sc-drop-wrapper">';
+	c += '<div class="sc-upload-thumb"></div>';
+	c += '<div class="sc-upload-gap"></div>';
+	c += '<div class="sc-dropzone">';
+	c += '<div class="cloak sc-spinner"><i class="fa fa-spin fa-refresh"></i></div>';
+	c += '<div class="sc-dropzone-msg">';
+	c += '<h1><span class="sc-image-area"></span><i class="fa fa-arrow-circle-o-down"></i><span class="sc-status">Drag Image Here.</span></h1>';
+	c += '<input type="file" class="sc-file-upload" name="ghost-file" readonly="readonly">';
+	c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'">';
+	c += '</div>';
+	c += '</div>';
+	c += '</div>';
 	c += '<div class="sc-toolbar clearfix">';
 	c += '<ul class="pull-left">';
 	c += '<li><button data-action="toolbar-rotate-left" data-active="false" title="Rotate Left"><i class="fa fa-fw fa-rotate-left"></i></button></li>';
@@ -571,17 +589,6 @@ SavviCrop.prototype.createElements = function(el){
 	c += '<li class="pull-right cloak"><button data-action="toolbar-help-close" data-active="false" title="Close"><i class="fa fa-fw fa-times-circle"></i></button></li>';
 	c += '</ul>';
 	c += '</div>';
-
-	/* dropzone */
-	c += '<div class="sc-dropzone">';
-	c += '<div class="cloak sc-spinner"><i class="fa fa-spin fa-refresh"></i></div>';
-	c += '<div class="sc-dropzone-msg">';
-	c += '<h1><span class="sc-image-area"></span><i class="fa fa-arrow-circle-o-down"></i><span class="sc-status">Drag Image Here.</span></h1>';
-	c += '<input type="file" class="sc-file-upload" name="ghost-file" readonly="readonly">';
-	c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'">';
-	c += '</div>';
-	c += '</div>';
-
 	c += '<div class="sc-workarea">';
 	c += '<div class="sc-help">';
 	c += '<ul>';

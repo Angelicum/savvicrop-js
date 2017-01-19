@@ -10,7 +10,8 @@ var SavviCrop = function(options, element, callback) {
 	var defaults = {required:false,
 									minCropSize:[200,200],
 									id: 'real-file',
-									cropRatio:'auto'
+									cropRatio:'auto',
+									imageData:false
 								 };
 	this.options = $.extend(true, defaults, options);
 
@@ -221,6 +222,11 @@ SavviCrop.prototype.init = function(){
 		var file = this.files[0] || e.target.files[0];
 		self.initFile( file );
 	});
+
+	if (self.options.imageData){
+		self.$fileData.val(self.options.imageData);
+		self.$uploadPreview.css('background-image','url("'+self.options.imageData+'")');
+	}
 };
 SavviCrop.prototype.showHelp = function() {
 	var self = this;

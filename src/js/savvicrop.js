@@ -209,6 +209,7 @@ SavviCrop.prototype.init = function(){
 	});
 
 	var input = self.$fileUpload;
+	var theFile = null;
 
 	self.updateStatus('default',self.options.labels.drag);
 	input.on({
@@ -222,12 +223,14 @@ SavviCrop.prototype.init = function(){
 			e.preventDefault();
 		},
 		drop: function(e){
-			var file = e.originalEvent.dataTransfer.files[0] || e.target.files[0];
-			self.initFile( file );
+			theFile = e.originalEvent.dataTransfer.files[0] || e.target.files[0];
+			self.initFile( theFile );
 		},
 		change: function(e){
-			var file = this.files[0] || e.target.files[0];
-			self.initFile( file );
+			theFile = this.files[0];
+			if (theFile){ //Fix for IE because this is triggering twice FUCK
+				self.initFile( theFile );
+			}
 		}
 	});
 
@@ -398,7 +401,7 @@ SavviCrop.prototype.initFile = function(file) {
 		}
 		img.src = event.target.result;
 	};
-	if (file.name){
+	if (file){
 		self.filename = file.name.substr( 0, file.name.indexOf('.') );
 	}else{
 		self.filename = 'untitled';

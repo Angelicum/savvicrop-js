@@ -217,12 +217,18 @@ SavviCrop.prototype.init = function(){
 		},
 		dragleave : function (e) { //function for dragging out of element
 			self.updateStatus('default',self.options.labels.drag);
+		},
+		dragover: function(e){
+			e.preventDefault();
+		},
+		drop: function(e){
+			var file = e.originalEvent.dataTransfer.files[0] || e.target.files[0];
+			self.initFile( file );
+		},
+		change: function(e){
+			var file = this.files[0] || e.target.files[0];
+			self.initFile( file );
 		}
-	});
-
-	input.on('change', function (e) {
-		var file = this.files[0] || e.target.files[0];
-		self.initFile( file );
 	});
 
 	if (self.options.imageData){
@@ -392,7 +398,12 @@ SavviCrop.prototype.initFile = function(file) {
 		}
 		img.src = event.target.result;
 	};
-	self.filename = file.name.substr( 0, file.name.indexOf('.') );
+	if (file.name){
+		self.filename = file.name.substr( 0, file.name.indexOf('.') );
+	}else{
+		self.filename = 'untitled';
+	}
+
 	reader.readAsDataURL(file);
 };
 /**

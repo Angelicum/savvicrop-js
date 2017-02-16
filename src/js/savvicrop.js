@@ -574,7 +574,7 @@ SavviCrop.prototype.createElements = function(el){
 	c += '<div class="cloak sc-spinner"><i class="fa fa-spin fa-refresh"></i></div>';
 	c += '<div class="sc-dropzone-msg">';
 	c += '<h1><span class="sc-image-area"></span><i class="fa fa-arrow-circle-o-down"></i><span class="sc-status"></span></h1>';
-	c += '<input type="file" class="sc-file-upload" name="ghost-file" readonly="readonly" title="Click to upload an image.">';
+	c += '<input type="file" class="sc-file-upload" name="ghost-file" title="Click to upload an image.">';
 	c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'">';
 	c += '</div>';
 	c += '</div>';

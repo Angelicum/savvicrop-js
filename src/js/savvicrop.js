@@ -12,7 +12,7 @@ var SavviCrop = function(options, element, callback) {
 									id: 'real-file',
 									cropRatio:'auto',
 									imageData:false,
-									labels: {drag: 'Click or Drag an Image Here.', drop: 'Drop Image Here.'}
+									labels: {drag: 'Upload Photo.', drop: 'Drop Image Here.'}
 								 };
 	this.options = $.extend(true, defaults, options);
 

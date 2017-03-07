@@ -98,18 +98,14 @@
   .sc-drop-wrapper .sc-dropzone {
     display: table-cell;
     font-size: 1.1em;
-    border: 2px dashed #999;
-    background-color: #f0eaf5;
+    border: 2px solid #EEE;
+    background-color: #F9F9F9;
     opacity: .9;
     color: #999;
-    background-color: #f0eaf5;
     text-align: center;
     margin: 0;
     border-radius: 6px;
-    -webkit-transition: all .3s ease-in-out;
-    -moz-transition: all .3s ease-in-out;
-    -o-transition: all .3s ease-in-out;
-    transition: all .3s ease-in-out; }
+    padding: 10px; }
     .sc-drop-wrapper .sc-dropzone i {
       vertical-align: middle;
       font-size: 18px;
@@ -128,7 +124,7 @@
       font-weight: normal;
       color: #948f9b; }
     .sc-drop-wrapper .sc-dropzone .head3 {
-      margin: 10px 0px;
+      margin: 3px 0px;
       font-size: 12px;
       font-weight: normal; }
     .sc-drop-wrapper .sc-dropzone button {
@@ -136,14 +132,26 @@
       font-size: 14px;
       font-weight: normal;
       border: 1px solid rgba(0, 0, 0, 0.25);
-      background: #EEE;
+      background: #FFF;
       padding: 8px 14px;
       border-radius: 5px;
       color: #888; }
-    .sc-drop-wrapper .sc-dropzone.highlight {
-      border: 2px dashed #008800; }
-    .sc-drop-wrapper .sc-dropzone.error {
-      border: 2px dashed #880000; }
+    .sc-drop-wrapper .sc-dropzone .sc-dropzone-msg {
+      border: 2px dashed #CCC;
+      border-radius: 5px;
+      -webkit-transition: all .3s ease-in-out;
+      -moz-transition: all .3s ease-in-out;
+      -o-transition: all .3s ease-in-out;
+      transition: all .3s ease-in-out;
+      vertical-align: middle;
+      padding: 10px 20px;
+      display: inline-block;
+      margin: 0 auto;
+      background: #f0eaf5; }
+      .sc-drop-wrapper .sc-dropzone .sc-dropzone-msg.highlight {
+        border: 2px dashed #008800; }
+      .sc-drop-wrapper .sc-dropzone .sc-dropzone-msg.error {
+        border: 2px dashed #880000; }
 
 .sc-file-upload {
   width: 100%;
@@ -168,10 +176,6 @@
   right: 0;
   bottom: 0;
   left: 0; }
-
-.sc-dropzone-msg {
-  vertical-align: middle;
-  padding: 15px 10px; }
 
 .sc-img-container {
   margin: 0 auto;

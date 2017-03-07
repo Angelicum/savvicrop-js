@@ -12,7 +12,7 @@ var SavviCrop = function(options, element, callback) {
 									id: 'real-file',
 									cropRatio:'auto',
 									imageData:false,
-									labels: {drag: 'Upload Photo.', drop: 'Drop Image Here.'}
+									labels: {drag: 'Drag &amp; Drop Your Image Here', drop: 'Drop Image Here'}
 								 };
 	this.options = $.extend(true, defaults, options);
 
@@ -587,7 +587,10 @@ SavviCrop.prototype.createElements = function(el){
 	c += '<div class="sc-dropzone">';
 	c += '<div class="cloak sc-spinner"><i class="fa fa-spin fa-refresh"></i></div>';
 	c += '<div class="sc-dropzone-msg">';
-	c += '<h1><span class="sc-image-area"></span><i class="fa fa-arrow-circle-o-down"></i><span class="sc-status"></span></h1>';
+	c += '<h1><span class="sc-image-area"></span><span class="sc-status"></span></h1>';
+	c += '<h2><i class="fa fa-picture-o"></i> We recommend JPG, PNG or GIF</h2>';
+	c += '<h3>- or -</h3>';
+	c += '<button class="btn"><i class="fa fa-upload"></i> Browse For Image</button>';
 	c += '<input type="file" class="sc-file-upload" name="ghost-file" title="Click to upload an image.">';
 	c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'">';
 	c += '</div>';

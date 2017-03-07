@@ -95,7 +95,7 @@
     border: 2px solid #DDD;
     background-color: #f8f7f9;
     display:table-cell;
-    width:100px;
+    width:250px;
     border-radius: 6px;
     background-repeat:no-repeat;
     background-position:center center;
@@ -122,32 +122,53 @@
     transition: all .3s ease-in-out;
     i {
       vertical-align: middle;
-      font-size: 30px;
-      margin-right: 10px;
+      font-size: 18px;
+      margin-right: 4px;
     }
-    h1 {
+    .head1,.head2,.head3 {
+      margin:0;
       text-align: center;
       font-family: sans-serif;
-      color: #c1bec5;
+      color: #8b8593;
       font-weight: 600;
       text-shadow: 0px 1px 1px #fff;
-      font-size: 18px;
+      font-size: 20px;
+    }
+    .head2{
+      margin-top:5px;
+      font-size:14px;
+      font-weight:normal;
+      color:#948f9b;
+    }
+    .head3{
+      margin:10px 0px;
+      font-size:12px;
+      font-weight:normal;
+    }
+    button{
+      margin:0px;
+      font-size:14px;
+      font-weight:normal;
+      border:1px solid rgba(0,0,0,.25);
+      background:#EEE;
+      padding:8px 14px;
+      border-radius:5px;
+      color:#888;
     }
     &.highlight {
       border: 2px dashed #008800;
       h1,i{
-        color: #008800;
+        //color: #008800;
       }
     }
     &.error{
       border: 2px dashed #880000;
       h1,i{
-        color: #880000;
+        //color: #880000;
       }
     }
   }
 }
-
 
 
 .sc-file-upload {
@@ -176,7 +197,7 @@
 
 .sc-dropzone-msg {
   vertical-align: middle;
-  padding: 10px; }
+  padding: 15px 10px; }
 
 .sc-img-container {
   margin: 0 auto;

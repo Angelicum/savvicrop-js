@@ -108,8 +108,8 @@
   .sc-dropzone {
     display:table-cell;
     font-size: 1.1em;
-    border: 2px solid #EEE;
-    background-color: #F9F9F9;
+    border: 2px solid rgba(0,0,0,0.08);
+    background-color: rgba(0,0,0,0.03);
     opacity: .9;
     color: #999;
     text-align: center;

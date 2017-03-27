@@ -626,7 +626,7 @@ SavviCrop.prototype.buildToolbar = function(el){
 	}
 	c += '</ul>';
 	$toolbar.html(c);
-	if(typeof $.fn.pluginname !== 'undefined') {
+	if(typeof $.fn.tooltip !== 'undefined') {
 		$toolbar.find('button').each(function(){
 			$(this).attr('data-placement','bottom');
 			$(this).tooltip();

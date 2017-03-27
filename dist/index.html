@@ -27,7 +27,15 @@ $( document ).ready(function() {
     required:true,
     minCropSize:[150,150],
     id:'real-file',
-    cropRatio:'fixed'
+    cropRatio:'fixed',
+    buttons: {
+      rotateLeft:true,
+      rotateRight:true,
+      zoomIn:true,
+      zoomOut:true,
+      preview:false,
+      load:true
+    },
   }
   $('.savvi-crop').savviCrop(args);
 });

@@ -1,7 +1,7 @@
 {
   "name": "savvicrop-js",
-  "version": "1.0.4",
-  "description": "The Cropping Tool for Big Men",
+  "version": "1.0.5",
+  "description": "The Cropping Tool for Sweaty Big Men",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

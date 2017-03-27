@@ -12,6 +12,14 @@ var SavviCrop = function(options, element, callback) {
 									id: 'real-file',
 									cropRatio:'auto',
 									imageData:false,
+									buttons: {
+										rotateLeft:true,
+										rotateRight:true,
+										zoomIn:true,
+										zoomOut:true,
+										preview:true,
+										load:true
+									},
 									labels: {drag: 'Drag &amp; Drop Your Image Here', drop: 'Drop Image Here'}
 								 };
 	this.options = $.extend(true, defaults, options);
@@ -29,6 +37,7 @@ var SavviCrop = function(options, element, callback) {
 	}
 
 	this.createElements(element);
+	this.buildToolbar(element);
 
 	this.$el = $(element);
 	this.$dropzone = $(element).find('.sc-dropzone');
@@ -41,7 +50,6 @@ var SavviCrop = function(options, element, callback) {
 	this.$uploadPreview = $(element).find('.sc-upload-thumb');
 	this.$fileData = $(element).find('.sc-file-blob');
 	this.$imgarea = $(element).find('.sc-img-container');
-	this.$help = $(element).find('.sc-help');
 	this.$toolbar = $(element).find('.sc-toolbar');
 	this.$previewWrap = $(element).find('.sc-preview-wrap');
 	this.$previewThumb = $(element).find('.sc-preview-thumb');
@@ -194,12 +202,6 @@ SavviCrop.prototype.init = function(){
 				case 'toolbar-zoom-out':
 					self.zoom(-1);
 				break;
-				case 'toolbar-help':
-					self.showHelp();
-				break;
-				case 'toolbar-help-close':
-					self.showHelp();
-				break;
 			}
 			if( active ){
 				self.setActiveToolbar( $(this) );
@@ -237,26 +239,6 @@ SavviCrop.prototype.init = function(){
 	if (self.options.imageData){
 		self.$fileData.val(self.options.imageData);
 		self.$uploadPreview.css('background-image','url("'+self.options.imageData+'")');
-	}
-};
-SavviCrop.prototype.showHelp = function() {
-	var self = this;
-	if( self.$help.data('active') == true ){
-		self.$help.fadeOut( 400 );
-		self.$help.data('active', false );
-		self.hide( self.$el.find('[data-action="toolbar-help-close"]').parent() );
-		self.show( self.$el.find('[data-action="toolbar-help"]').parent() );
-		self.$el.find('[data-action="toolbar-help-close"]').remove('active');
-		self.$toolbar.find('button').removeAttr('disabled');
-	}else{
-		self.$help.fadeIn( 400 );
-		self.$help.data('active', true );
-
-		self.hide( self.$el.find('[data-action="toolbar-help"]').parent() );
-		self.show( self.$el.find('[data-action="toolbar-help-close"]').parent() );
-		self.$el.find('[data-action="toolbar-help-close"]').addClass('active');
-		self.$toolbar.find('button').not('[data-action="toolbar-help-close"]').attr('disabled', true );
-
 	}
 };
 SavviCrop.prototype.setActiveToolbar = function( ele ){
@@ -470,6 +452,7 @@ SavviCrop.prototype.initCrop = function() {
 		//minCanvasHeight:self.MIN_HEIGHT,
 		scalable: false,
 		movable: true,
+		zoomOnWheel: false,
 		//preview:'.preview-thumb, .preview-crop',
 		preview:self.$previewThumb,
 		restore:false,
@@ -597,36 +580,8 @@ SavviCrop.prototype.createElements = function(el){
 	c += '</div>';
 	c += '</div>';
 	c += '<div class="sc-toolbar clearfix">';
-	c += '<ul class="pull-left">';
-	c += '<li><button data-action="toolbar-rotate-left" data-active="false" title="Rotate Left"><i class="fa fa-fw fa-rotate-left"></i></button></li>';
-	c += '<li><button data-action="toolbar-rotate-right" data-active="false" title="Rotate Right"><i class="fa fa-fw fa-rotate-right"></i></button></li>';
-	c += '<li><button data-action="toolbar-zoom-in" data-active="false" title="Zoom In"><i class="fa fa-fw fa-search-plus"></i></button></li>';
-	c += '<li><button data-action="toolbar-zoom-out" data-active="false" title="Zoom Out"><i class="fa fa-fw fa-search-minus"></i></button></li>';
-	c += '<li><button data-action="toolbar-preview" data-active="false" title="Preview"><i class="fa fa-fw fa-eye"></i></button></li>';
-	c += '<li class="cloak"><button data-action="toolbar-preview-close" data-active="false" title="Close Preview"><i class="fa fa-fw fa-eye-slash"></i></button></li>';
-	c += '<li><button data-action="toolbar-reset" data-active="false" title="Reset"><i class="fa fa-fw fa-ban"></i></button></li>';
-	c += '</ul>';
-	c += '<ul class="pull-right">';
-	c += '<li class="pull-right" ><button data-action="toolbar-save" data-active="false" title="Save Cropped File"><i class="fa fa-fw fa-check-circle txt-success"></i></button></li>';
-	c += '<li class="pull-right"><button data-action="toolbar-load" data-active="false" title="Edit Another File"><i class="fa fa-fw fa-image"></i></button></li>';
-	c += '<li class="pull-right"><button data-action="toolbar-help" data-active="false" title="Help"><i class="fa fa-fw fa-info-circle"></i></button></li>';
-	c += '<li class="pull-right cloak"><button data-action="toolbar-help-close" data-active="false" title="Close"><i class="fa fa-fw fa-times-circle"></i></button></li>';
-	c += '</ul>';
 	c += '</div>';
 	c += '<div class="sc-workarea">';
-	c += '<div class="sc-help">';
-	c += '<ul>';
-	c += '<li><i class="fa fa-fw fa-rotate-left"></i> Rotate Image Left</li>';
-	c += '<li><i class="fa fa-fw fa-rotate-right"></i> Rotate Image Right</li>';
-	c += '<li><i class="fa fa-fw fa-search-plus"></i> Zoom In</li>';
-	c += '<li><i class="fa fa-fw fa-search-minus"></i> Zoom Out</li>';
-	c += '<li><i class="fa fa-fw fa-eye"></i> Preview Crop</li>';
-	c += '<li><i class="fa fa-fw fa-eye-slash"></i> Close Preview</li>';
-	c += '<li><i class="fa fa-fw fa-ban"></i> Reset Crop</li>';
-	c += '<li><i class="fa fa-fw fa-check-circle txt-success"></i> Save Cropped Image</li>';
-	c += '<li><i class="fa fa-fw fa-image"></i> Edit Another File</li>';
-	c += '</ul>';
-	c += '</div>';
 	c += '<div class="sc-preview-thumb"></div>';
 	c += '<div class="sc-preview-wrap cloak">';
 	c += '<div class="sc-preview-crop"></div>';
@@ -637,6 +592,48 @@ SavviCrop.prototype.createElements = function(el){
 	$(el).html(c);
 
 };
+
+SavviCrop.prototype.buildToolbar = function(el){
+	var $toolbar = $(el).find('.sc-toolbar');
+	var self = this;
+	var opts = self.options.buttons;
+	var c = '';
+	c += '<ul class="pull-left">';
+	if (opts.rotateLeft){
+		c += '<li><button data-action="toolbar-rotate-left" data-active="false" title="Rotate Left"><i class="fa fa-fw fa-rotate-left"></i></button></li>';
+	}
+	if (opts.rotateRight){
+		c += '<li><button data-action="toolbar-rotate-right" data-active="false" title="Rotate Right"><i class="fa fa-fw fa-rotate-right"></i></button></li>';
+	}
+	if (opts.zoomIn){
+		c += '<li><button data-action="toolbar-zoom-in" data-active="false" title="Zoom In"><i class="fa fa-fw fa-search-plus"></i></button></li>';
+	}
+	if (opts.zoomOut){
+		c += '<li><button data-action="toolbar-zoom-out" data-active="false" title="Zoom Out"><i class="fa fa-fw fa-search-minus"></i></button></li>';
+	}
+	if (opts.preview){
+		c += '<li><button data-action="toolbar-preview" data-active="false" title="Preview"><i class="fa fa-fw fa-eye"></i></button></li>';
+		c += '<li class="cloak"><button data-action="toolbar-preview-close" data-active="false" title="Close Preview"><i class="fa fa-fw fa-eye-slash"></i></button></li>';
+	}
+	if (opts.reset){
+		c += '<li><button data-action="toolbar-reset" data-active="false" title="Reset"><i class="fa fa-fw fa-ban"></i></button></li>';
+	}
+	c += '</ul>';
+	c += '<ul class="pull-right">';
+	c += '<li class="pull-right" ><button data-action="toolbar-save" data-active="false" title="Save Cropped File"><i class="fa fa-fw fa-check-circle txt-success"></i></button></li>';
+	if (opts.load){
+		c += '<li class="pull-right"><button data-action="toolbar-load" data-active="false" title="Edit Another File"><i class="fa fa-ban"></i></button></li>';
+	}
+	c += '</ul>';
+	$toolbar.html(c);
+	if(typeof $.fn.pluginname !== 'undefined') {
+		$toolbar.find('button').each(function(){
+			$(this).attr('data-placement','bottom');
+			$(this).tooltip();
+		});
+	}
+};
+
 /* Turn that dingle into a jquery plugin */
 (function($) {
 	$.fn.savviCrop = function(options,callback) {

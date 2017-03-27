@@ -630,6 +630,9 @@ SavviCrop.prototype.buildToolbar = function(el){
 		$toolbar.find('button').each(function(){
 			$(this).attr('data-placement','bottom');
 			$(this).tooltip();
+			$(this).on('click tap',function(){
+				$(this).tooltip('hide');
+			});
 		});
 	}
 };

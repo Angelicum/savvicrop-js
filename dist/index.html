@@ -17,6 +17,7 @@
 <form method="POST" action="blarf.php">
 
 <div class="savvi-crop"></div>
+<div class="savvi-crop2"></div>
 
 <button type="submit">Submit</button>
 </form>
@@ -38,6 +39,23 @@ $( document ).ready(function() {
     },
   }
   $('.savvi-crop').savviCrop(args);
+
+  var args = {
+    required:true,
+    minCropSize:[150,150],
+    id:'real-file',
+    cropRatio:'fixed',
+    buttons: {
+      rotateLeft:true,
+      rotateRight:true,
+      zoomIn:true,
+      zoomOut:true,
+      preview:false,
+      load:true
+    },
+  }
+  $('.savvi-crop2').savviCrop(args);
+
 });
 </script>
 </body>

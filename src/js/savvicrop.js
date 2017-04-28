@@ -360,7 +360,18 @@ SavviCrop.prototype.cropPreview = function() {
 SavviCrop.prototype.initFile = function(file) {
 	var self = this;
 	var reader = new FileReader();
+
 	self.preInitCrop();
+	if ( file.type !== 'image/png' &&
+			 file.type !== 'image/jpg' &&
+			 file.type !== 'image/jpeg' &&
+			 file.type !== 'image/gif' ){
+		self.updateStatus('error','Image is the wrong filetype.');
+		self.restart();
+		return false;
+	}
+
+
 	reader.onload = function (event) {
 		var img = new Image();
 		img.id = 'img-crop-'+self.options.id;
@@ -562,6 +573,7 @@ SavviCrop.prototype.saveCropped = function(){
 SavviCrop.prototype.createElements = function(el){
 	var self = this;
 	var c = '';
+	var m = '';
 	/* Create ToolBar */
 	/* dropzone */
 	c += '<div class="sc-drop-wrapper">';
@@ -579,18 +591,19 @@ SavviCrop.prototype.createElements = function(el){
 	c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'">';
 	c += '</div>';
 	c += '</div>';
-	c += '<div class="sc-toolbar clearfix">';
-	c += '</div>';
-	c += '<div class="sc-workarea">';
-	c += '<div class="sc-preview-thumb"></div>';
-	c += '<div class="sc-preview-wrap cloak">';
-	c += '<div class="sc-preview-crop"></div>';
-	c += '</div>';
-	c += '<div class="sc-img-container">';
-	c += '</div>';
-	c += '</div>';
 	$(el).html(c);
-
+	/* Todo: this needs to maybe go in to a modal */
+	m += '<div class="sc-toolbar clearfix">';
+	m += '</div>';
+	m += '<div class="sc-workarea">';
+	m += '<div class="sc-preview-thumb"></div>';
+	m += '<div class="sc-preview-wrap cloak">';
+	m += '<div class="sc-preview-crop"></div>';
+	m += '</div>';
+	m += '<div class="sc-img-container">';
+	m += '</div>';
+	m += '</div>';
+	$(el).append(m);
 };
 
 SavviCrop.prototype.buildToolbar = function(el){

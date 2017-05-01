@@ -439,7 +439,6 @@ SavviCrop.prototype.centerPreview = function() {
 SavviCrop.prototype.preInitCrop = function() {
 	var self = this;
 	self.show(self.$spinner);
-	self.show(self.$workarea);
 };
 SavviCrop.prototype.initCrop = function() {
 	var self = this;

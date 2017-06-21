@@ -40,7 +40,7 @@ var SavviCrop = function(options, element, callback) {
 	this.buildToolbar(element);
 
 	this.$el = $(element);
-	this.$dropzone = $(element).find('.sc-dropzone');
+	this.$dropzone = $(element).find('.sc-drop-wrapper');
 	this.$cropper = false;
 	this.created = false;
 	this.filename = 'tmp';
@@ -62,35 +62,6 @@ var SavviCrop = function(options, element, callback) {
 SavviCrop.onCropSubmit = function() {
 	$('body').trigger('onCropSubmit');
 }
-SavviCrop.prototype.isEventSupported = function( eventName, element ) {
-	var TAGNAMES = {
-	'select': 'input', 'change': 'input',
-	'submit': 'form', 'reset': 'form',
-	'error': 'img', 'load': 'img', 'abort': 'img'
-	};
-	element = element || document.createElement(TAGNAMES[eventName] || 'div');
-	eventName = 'on' + eventName;
-	// When using `setAttribute`, IE skips "unload", WebKit skips "unload" and "resize", whereas `in` "catches" those
-	var isSupported = eventName in element;
-	if ( !isSupported ) {
-		// If it has no `setAttribute` (i.e. doesn't implement Node interface), try generic element
-		if ( !element.setAttribute ) {
-		element = document.createElement('div');
-		}
-		if ( element.setAttribute && element.removeAttribute ) {
-		element.setAttribute(eventName, '');
-		isSupported = typeof element[eventName] == 'function';
-
-		// If property was created, "remove it" (by setting value to `undefined`)
-		if ( typeof element[eventName] != 'undefined' ) {
-			element[eventName] = undefined;
-		}
-		element.removeAttribute(eventName);
-		}
-	}
-	element = null;
-	return isSupported;
-};
 SavviCrop.prototype.show = function( ele, fade ) {
 	if (typeof fade === "undefined" || fade === null) {
 		fade = 0;
@@ -442,6 +413,7 @@ SavviCrop.prototype.preInitCrop = function() {
 };
 SavviCrop.prototype.initCrop = function() {
 	var self = this;
+	self.updateStatus('default','Drag &amp; Drop Your Image Here.');
 	self.hide(self.$dropzone);
 	self.show(self.$workarea);
 	self.hide('#error');

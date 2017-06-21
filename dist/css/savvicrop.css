@@ -440,11 +440,20 @@ button[disabled]:hover, button.disabled:hover {
 
 @media (max-width: 480px) {
   .sc-toolbar {
-    height: 96px; }
-  .sc-toolbar ul {
-    float: none; }
-  .sc-help ul li {
-    display: block;
-    width: 100%; }
-  .sc-toolbar ul:nth-child(2) li {
-    float: left; } }
+    height:auto;
+  }
+  .sc-toolbar:after{
+    content:" ";
+    display:block;
+    clear:both;
+  }
+   .sc-drop-wrapper .sc-dropzone .sc-dropzone-msg{
+    display:none;
+   }
+   .head3{
+    display:none;
+   }
+   .sc-drop-wrapper .sc-upload-thumb{
+    width:60px;
+   }
+  }

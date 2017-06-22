@@ -10,7 +10,7 @@ var SavviCrop = function(options, element, callback) {
 	var defaults = {required:false,
 									minCropSize:[200,200],
 									id: 'real-file',
-									cropRatio:'auto',
+									cropRatio:'fixed',
 									imageData:false,
 									buttons: {
 										rotateLeft:true,

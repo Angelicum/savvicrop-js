@@ -1,6 +1,6 @@
 {
   "name": "savvicrop-js",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "The Cropping Tool for Sweaty Big Men",
   "main": "index.js",
   "scripts": {

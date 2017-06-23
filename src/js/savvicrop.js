@@ -559,7 +559,7 @@ SavviCrop.prototype.createElements = function(el){
 	c += '<div class="head3">- or -</div>';
 	c += '<button class="btn"><i class="fa fa-upload"></i> Browse For Image</button>';
 	c += '<input type="file" class="sc-file-upload" name="ghost-file" title="Click to upload an image.">';
-	c += '<textarea style="width:1px; visibility:hidden;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'"></textarea>';
+	c += '<textarea style="width:1px; display:none;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'"></textarea>';
 	c += '</div>';
 	c += '</div>';
 	$(el).html(c);

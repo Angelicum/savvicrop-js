@@ -523,7 +523,7 @@ SavviCrop.prototype.saveCropped = function(){
 		canvasArgs.width = self.MIN_WIDTH;
 	}
 	var canvas = self.$cropper.cropper('getCroppedCanvas',canvasArgs);
-	var blob = canvas.toDataURL("image/jpeg",0.9);
+	var blob = canvas.toDataURL("image/jpeg",0.5);
 	var imgArea = self.$el.find('.sc-image-area');
 	self.$fileData.val(blob);
 	self.destroy();
@@ -559,7 +559,7 @@ SavviCrop.prototype.createElements = function(el){
 	c += '<div class="head3">- or -</div>';
 	c += '<button class="btn"><i class="fa fa-upload"></i> Browse For Image</button>';
 	c += '<input type="file" class="sc-file-upload" name="ghost-file" title="Click to upload an image.">';
-	c += '<input type="text" style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'">';
+	c += '<textarea style="width:1px;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'"></textarea>';
 	c += '</div>';
 	c += '</div>';
 	$(el).html(c);

@@ -468,6 +468,17 @@ button[disabled]:hover, button.disabled:hover {
   color: #5bc0de; }
 
 @media (max-width: 480px) {
+  .sc-drop-wrapper {
+    .sc-upload-thumb{
+      width:60px;
+    }
+    .sc-dropzone{
+      .sc-dropzone-msg,.head3{
+        display:none;
+      }
+    }
+  }
+
   .sc-toolbar {
     height: 96px; }
   .sc-toolbar ul {

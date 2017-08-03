@@ -12,6 +12,7 @@ var SavviCrop = function(options, element, callback) {
 									id: 'real-file',
 									cropRatio:'fixed',
 									imageData:false,
+									modal:false,
 									buttons: {
 										rotateLeft:true,
 										rotateRight:true,
@@ -23,6 +24,8 @@ var SavviCrop = function(options, element, callback) {
 									labels: {drag: 'Drag &amp; Drop Your Image Here', drop: 'Drop Image Here'}
 								 };
 	this.options = $.extend(true, defaults, options);
+
+	if (this.checkIncludes() == false) return;
 
 	this.UPLOAD_URL = '/image-crop';
 	this.MIN_WIDTH = this.options.minCropSize[0];
@@ -37,26 +40,33 @@ var SavviCrop = function(options, element, callback) {
 	}
 
 	this.createElements(element);
-	this.buildToolbar(element);
-
-	this.$el = $(element);
-	this.$dropzone = $(element).find('.sc-drop-wrapper');
+	this.$el = $('[data-id="sc-binder-'+this.options.id+'"]');
+	this.buildToolbar(this.$el);
+	this.$dropzone = this.$el.find('.sc-drop-wrapper');
 	this.$cropper = false;
 	this.created = false;
 	this.filename = 'tmp';
-	this.$cropperCropBox = $(element).find('.cropper-crop-box');
-	this.$spinner = $(element).find('.sc-spinner');
-	this.$fileUpload = $(element).find('.sc-file-upload');
-	this.$uploadPreview = $(element).find('.sc-upload-thumb');
-	this.$fileData = $(element).find('.sc-file-blob');
-	this.$imgarea = $(element).find('.sc-img-container');
-	this.$toolbar = $(element).find('.sc-toolbar');
-	this.$previewWrap = $(element).find('.sc-preview-wrap');
-	this.$previewThumb = $(element).find('.sc-preview-thumb');
-	this.$previewCrop = $(element).find('.sc-preview-crop');
-	this.$workarea = $(element).find('.sc-workarea');
+	this.$cropperCropBox = this.$el.find('.cropper-crop-box');
+	this.$spinner = this.$el.find('.sc-spinner');
+	this.$fileUpload = this.$el.find('.sc-file-upload');
+	this.$uploadPreview = this.$el.find('.sc-upload-thumb');
+	this.$fileData = this.$el.find('.sc-file-blob');
+	this.$imgarea = this.$el.find('.sc-img-container');
+	this.$toolbar = this.$el.find('.sc-toolbar');
+	this.$previewWrap = this.$el.find('.sc-preview-wrap');
+	this.$previewThumb = this.$el.find('.sc-preview-thumb');
+	this.$previewCrop = this.$el.find('.sc-preview-crop');
+	this.$workarea = this.$el.find('.sc-workarea');
 
 	this.init();
+};
+
+
+SavviCrop.prototype.checkIncludes = function() {
+  var isOkay = true;
+  if (!window.jQuery) { console.log('[-] Error: jQuery is not installed.'); isOkay = false;}
+  if (!$.isFunction($.fn.modal)) { console.log('[-] Error: bootstrap is not installed.'); isOkay = false;}
+  return isOkay;
 };
 
 SavviCrop.onCropSubmit = function() {
@@ -67,15 +77,14 @@ SavviCrop.prototype.show = function( ele, fade ) {
 		fade = 0;
 	}
 	$(ele).removeClass('cloak');
-	$(ele).show( fade );
+	$(ele).stop(false,true).show( fade );
 };
 SavviCrop.prototype.hide = function( ele, fade ) {
 	if (typeof fade === "undefined" || fade === null) {
 		fade = 0;
 	}
 	//$(ele).addClass('cloak');
-
-	$(ele).hide(fade);
+	$(ele).stop(false,true).hide(fade);
 };
 SavviCrop.prototype.error = function( msg ) {
 	var self = this;
@@ -163,8 +172,14 @@ SavviCrop.prototype.init = function(){
 					//show( '.cropper-line' );
 					self.show( self.$cropperCropBox);
 					self.saveCropped();
+					if (self.options.modal){
+						$('#sc-modal-'+self.options.id).modal('hide');
+					}
 				break;
 				case 'toolbar-load':
+					if (self.options.modal){
+						$('#sc-modal-'+self.options.id).modal('hide');
+					}
 					self.restart();
 				break;
 				case 'toolbar-zoom-in':
@@ -378,8 +393,6 @@ When previewing, make sure to hide the crop points
 */
 SavviCrop.prototype.preview = function() {
 	var self = this;
-	var containerHeight = $(self.$workarea).height();
-	var containerWidth = $(self.$workarea).width();
 	var blob = self.$cropper.cropper('getCroppedCanvas').toDataURL("image/jpeg",0.9);
 	var img = new Image();
 	img.id = 'img-pv';
@@ -413,6 +426,13 @@ SavviCrop.prototype.preInitCrop = function() {
 };
 SavviCrop.prototype.initCrop = function() {
 	var self = this;
+	if (self.options.modal){
+		$('#sc-modal-'+self.options.id).modal('show');
+		$('#sc-modal-'+self.options.id).off('shown.bs.modal');
+		$('#sc-modal-'+self.options.id).on('shown.bs.modal', function() {
+			$(window).trigger('resize');
+		});
+	}
 	self.updateStatus('default','Drag &amp; Drop Your Image Here.');
 	self.hide(self.$dropzone);
 	self.show(self.$workarea);
@@ -453,7 +473,6 @@ SavviCrop.prototype.initCrop = function() {
 					self.cropperReady(img);
 				});
 			}
-
 			self.setDragMode( 'move');
 		},
 		cropstart: function(e){
@@ -547,6 +566,7 @@ SavviCrop.prototype.createElements = function(el){
 	var m = '';
 	/* Create ToolBar */
 	/* dropzone */
+	c += '<div data-id="sc-binder-'+self.options.id+'">';
 	c += '<div class="sc-drop-wrapper">';
 	c += '<div class="sc-upload-thumb"></div>';
 	c += '<div class="sc-upload-gap"></div>';
@@ -562,8 +582,11 @@ SavviCrop.prototype.createElements = function(el){
 	c += '<textarea style="width:1px; display:none;" class="sc-file-blob" required="'+self.options.required+'" id="'+self.options.id+'" name="'+self.options.id+'"></textarea>';
 	c += '</div>';
 	c += '</div>';
+	c += '</div>';
 	$(el).html(c);
+
 	/* Todo: this needs to maybe go in to a modal */
+
 	m += '<div class="sc-toolbar clearfix">';
 	m += '</div>';
 	m += '<div class="sc-workarea">';
@@ -574,7 +597,28 @@ SavviCrop.prototype.createElements = function(el){
 	m += '<div class="sc-img-container">';
 	m += '</div>';
 	m += '</div>';
-	$(el).append(m);
+
+	if (self.options.modal){
+		n = '';
+	  n += '<div id="sc-modal-'+self.options.id+'" data-id="sc-binder-'+self.options.id+'" class="modal fade '+$(el).attr('class')+'" role="dialog" data-backdrop="static" data-keyboard="false">';
+	  n += '<div class="modal-dialog">';
+	  n += '<div class="modal-content">';
+	  n += '<div class="modal-header">';
+	  n += '<button type="button" class="close" data-dismiss="modal">&times;</button>';
+	  n += '<h3 class="modal-title">Image Editor</h3>';
+	  n += '</div>';
+	  n += '<div class="modal-body">' + m;
+	  n += '</div>'; /* .modal-body */
+	  n += '<div class="modal-footer">';
+	  n += '<button class="btn btn-default" data-dismiss="modal">Cancel</button>';
+	  n += '</div>';
+	  n += '</div>';
+	  n += '</div>';
+	  n += '</div>';
+		$('body').append(n);
+	}else{
+		$(el).append('<div data-id="sc-binder-'+self.options.id+'">'+m+'</div>');
+	}
 };
 
 SavviCrop.prototype.buildToolbar = function(el){

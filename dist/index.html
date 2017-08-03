@@ -7,8 +7,10 @@
   <title>SavviCrop - Sniff My Socks</title>
   <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css" type="text/css"/>
   <link rel="stylesheet" href="../node_modules/cropper/dist/cropper.css" type="text/css"/>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css"/>
   <link rel="stylesheet" href="css/savvicrop.css" type="text/css"/>
   <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="../node_modules/cropper/dist/cropper.min.js"></script>
   <script src="../src/js/savvicrop.js"></script>
 </head>
@@ -29,6 +31,7 @@ $( document ).ready(function() {
     minCropSize:[150,150],
     id:'real-file',
     cropRatio:'fixed',
+    modal:false,
     buttons: {
       rotateLeft:true,
       rotateRight:true,
@@ -43,7 +46,8 @@ $( document ).ready(function() {
   var args = {
     required:true,
     minCropSize:[150,150],
-    id:'real-file',
+    id:'real-file2',
+    modal:true,
     cropRatio:'fixed',
     buttons: {
       rotateLeft:true,

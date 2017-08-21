@@ -231,6 +231,8 @@ SavviCrop.prototype.init = function(){
 	if (self.options.imageData){
 		self.$fileData.val(self.options.imageData);
 		self.$uploadPreview.css('background-image','url("'+self.options.imageData+'")');
+		self.show(self.$uploadClear);
+		self.updateStatus('success','Image Attached');
 	}
 };
 SavviCrop.prototype.setActiveToolbar = function( ele ){

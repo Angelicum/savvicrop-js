@@ -101,6 +101,26 @@
     background-position:center center;
     background-size:cover;
   }
+  .sc-upload-clear{
+    display:none;
+    margin-top:3px;
+    margin-left:3px;
+    z-index:3;
+    cursor:pointer;
+    opacity:.7;
+    background-color:rgba(0,0,0,.85);
+    position:absolute;
+    color:#FFF;
+    font-size:25px;
+    border-radius:26px;
+    text-align:center;
+    height:26px;
+    width:26px;
+    line-height:21px;
+    &:hover{
+      opacity:1;
+    }
+  }
   .sc-upload-gap{
     width:5px;
     display:table-cell;

@@ -317,6 +317,7 @@ SavviCrop.prototype.resetUpload = function() {
 	self.$fileUpload.val("");
 	self.$uploadPreview.css('background-image','none');
 	self.$fileData.val("");
+	self.updateStatus('default',self.options.labels.drag);
 }
 SavviCrop.prototype.destroy = function() {
 	var self = this;

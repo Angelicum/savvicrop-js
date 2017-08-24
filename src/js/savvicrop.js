@@ -144,6 +144,7 @@ SavviCrop.prototype.init = function(){
 	}
 	self.$uploadClear.on('click',function(){
 		self.restart();
+		self.updateStatus('default',self.options.labels.drag);
 	});
 	self.$toolbar.on('click','button', function( e ) {
 		e.preventDefault();
@@ -319,7 +320,6 @@ SavviCrop.prototype.resetUpload = function() {
 	self.$fileUpload.val("");
 	self.$uploadPreview.css('background-image','none');
 	self.$fileData.val("");
-	self.updateStatus('default',self.options.labels.drag);
 }
 SavviCrop.prototype.destroy = function() {
 	var self = this;

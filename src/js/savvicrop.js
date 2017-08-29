@@ -378,7 +378,6 @@ SavviCrop.prototype.downsampleImage = function(img){
 	  canvas.height=ihScaled;
 	  ctx.drawImage(img,0,0,iwScaled,ihScaled);
   }
-  $('body').append('<img src="'+canvas.toDataURL()+'"/>');
   return canvas.toDataURL();
 }
 

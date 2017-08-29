@@ -378,7 +378,7 @@ SavviCrop.prototype.downsampleImage = function(img){
 	  canvas.height=ihScaled;
 	  ctx.drawImage(img,0,0,iwScaled,ihScaled);
   }
-  return canvas.toDataURL();
+  return canvas.toDataURL("image/jpeg",0.5);
 }
 
 SavviCrop.prototype.initFile = function(file) {
@@ -563,7 +563,6 @@ SavviCrop.prototype.saveCropped = function(){
 		canvasArgs.width = self.MIN_WIDTH;
 	}
 	var canvas = self.$cropper.cropper('getCroppedCanvas',canvasArgs);
-	var blob = canvas.toDataURL("image/jpeg",0.5);
 	var blob = self.downsampleImage(canvas);
 
 	var imgArea = self.$el.find('.sc-image-area');

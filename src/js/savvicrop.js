@@ -21,7 +21,7 @@ var SavviCrop = function(options, element, callback) {
 										preview:true,
 										load:true
 									},
-									maxOutputSize:[800,800],
+									maxOutputSize:[1200,1200],
 									labels: {drag: 'Drag &amp; Drop Your Image Here', drop: 'Drop Image Here'}
 								 };
 	this.options = $.extend(true, defaults, options);
@@ -356,20 +356,29 @@ SavviCrop.prototype.cropPreview = function() {
 };
 
 SavviCrop.prototype.downsampleImage = function(img){
+	console.log(img.height,img.width);
+	var self=this;
 	var canvas=document.createElement('canvas');
 	var ctx=canvas.getContext("2d");
 	var cw=canvas.width;
 	var ch=canvas.height;
-	var self=this;
-	var scale=Math.min((self.options.maxOutputSize[0]/img.width),(self.options.maxOutputSize[1]/img.height));
 	var iw=img.width;
   var ih=img.height;
-  var scale=Math.min((self.options.maxOutputSize[0]/iw),(self.options.maxOutputSize[1]/ih));
+  var maxH = self.options.maxOutputSize[0];
+  var maxW = self.options.maxOutputSize[1];
+  var scale=Math.min((maxW/iw),(maxH/ih));
   var iwScaled=iw*scale;
   var ihScaled=ih*scale;
-  canvas.width=iwScaled;
-  canvas.height=ihScaled;
-  ctx.drawImage(img,0,0,iwScaled,ihScaled);
+  if ((iw <= maxW) || (ih <= maxH)){
+	  canvas.width=iw;
+	  canvas.height=ih;
+	  ctx.drawImage(img,0,0,iw,ih);
+  }else{
+	  canvas.width=iwScaled;
+	  canvas.height=ihScaled;
+	  ctx.drawImage(img,0,0,iwScaled,ihScaled);
+  }
+  $('body').append('<img src="'+canvas.toDataURL()+'"/>');
   return canvas.toDataURL();
 }
 
@@ -557,6 +566,7 @@ SavviCrop.prototype.saveCropped = function(){
 	var canvas = self.$cropper.cropper('getCroppedCanvas',canvasArgs);
 	var blob = canvas.toDataURL("image/jpeg",0.5);
 	var blob = self.downsampleImage(canvas);
+
 	var imgArea = self.$el.find('.sc-image-area');
 	self.$fileData.val(blob);
 	self.destroy();

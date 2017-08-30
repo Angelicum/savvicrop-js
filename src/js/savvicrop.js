@@ -13,6 +13,7 @@ var SavviCrop = function(options, element, callback) {
 									cropRatio:'fixed',
 									imageData:false,
 									modal:false,
+									imageQuality:'1',
 									buttons: {
 										rotateLeft:true,
 										rotateRight:true,
@@ -378,7 +379,7 @@ SavviCrop.prototype.downsampleImage = function(img){
 	  canvas.height=ihScaled;
 	  ctx.drawImage(img,0,0,iwScaled,ihScaled);
   }
-  return canvas.toDataURL("image/jpeg",0.5);
+  return canvas.toDataURL("image/jpeg",self.options.imageQuality);
 }
 
 SavviCrop.prototype.initFile = function(file) {
@@ -431,7 +432,7 @@ When previewing, make sure to hide the crop points
 */
 SavviCrop.prototype.preview = function() {
 	var self = this;
-	var blob = self.$cropper.cropper('getCroppedCanvas').toDataURL("image/jpeg",0.9);
+	var blob = self.$cropper.cropper('getCroppedCanvas').toDataURL("image/jpeg",self.options.imageQuality);
 	var img = new Image();
 	img.id = 'img-pv';
 	img.onload = function() {

@@ -10,6 +10,7 @@ var SavviCrop = function(options, element, callback) {
 	var defaults = {required:false,
 									minCropSize:[200,200],
 									id: 'real-file',
+									name: false,
 									cropRatio:'fixed',
 									imageData:false,
 									modal:false,
@@ -26,6 +27,12 @@ var SavviCrop = function(options, element, callback) {
 									labels: {drag: 'Drag &amp; Drop Your Image Here', drop: 'Drop Image Here'}
 								 };
 	this.options = $.extend(true, defaults, options);
+
+	if (this.options.name == false){
+		this.options.name = this.options.id
+	}
+
+	this.options.id = (this.options.id).replace(/[^a-z0-9]/gi, '');
 
 	if (this.checkIncludes() == false) return;
 
@@ -607,7 +614,7 @@ SavviCrop.prototype.createElements = function(el){
 	c += '<div class="head3">- or -</div>';
 	c += '<button class="btn"><i class="fa fa-upload"></i> Browse For Image</button>';
 	c += '<input type="file" class="sc-file-upload" name="ghost-file" title="Click to upload an image.">';
-	c += '<textarea style="width:1px; display:none;" class="sc-file-blob" '+strRequired+' id="'+self.options.id+'" name="'+self.options.id+'"></textarea>';
+	c += '<textarea style="width:1px; display:none;" class="sc-file-blob" '+strRequired+' id="'+self.options.id+'" name="'+self.options.name+'"></textarea>';
 	c += '</div>';
 	c += '</div>';
 	c += '</div>';

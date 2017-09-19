@@ -244,6 +244,16 @@ SavviCrop.prototype.init = function(){
 		self.show(self.$uploadClear);
 		self.updateStatus('success','Image Attached');
 	}
+
+	if (self.options.modal){
+		$('#sc-modal-'+self.options.id).find('#sc-modal-sub-'+self.options.id).click(function(){
+			self.show( self.$cropperCropBox);
+			self.saveCropped();
+			if (self.options.modal){
+				$('#sc-modal-'+self.options.id).modal('hide');
+			}
+		});
+	}
 };
 SavviCrop.prototype.setActiveToolbar = function( ele ){
 	$(ele).addClass('active');
@@ -645,7 +655,7 @@ SavviCrop.prototype.createElements = function(el){
 	  n += '<div class="modal-body">' + m;
 	  n += '</div>'; /* .modal-body */
 	  n += '<div class="modal-footer">';
-	  n += '<button class="btn btn-default" data-dismiss="modal">Cancel</button>';
+	  n += '<button class="btn btn-success" id="sc-modal-sub-'+self.options.id+'"><i class="fa fa-check-circle"></i> Save</button>';
 	  n += '</div>';
 	  n += '</div>';
 	  n += '</div>';

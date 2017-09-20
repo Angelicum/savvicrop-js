@@ -18,14 +18,20 @@
 
 <form method="POST" action="blarf.php">
 
+<h4>No modal</h4>
 <div class="savvi-crop"></div>
+<h4>Modal</h4>
 <div class="savvi-crop2"></div>
+<h4>No Editor</h4>
+<div class="savvi-crop3"></div>
 
 <button type="submit">Submit</button>
 </form>
 
 <script>
 $( document ).ready(function() {
+
+
   var args = {
     required:'required',
     minCropSize:[150,150],
@@ -62,7 +68,25 @@ $( document ).ready(function() {
     },
   }
   $('.savvi-crop2').savviCrop(args);
-
+  var args = {
+    required:'required',
+    editor:false,
+    minCropSize:[150,150],
+    maxOutputSize:[800,800],
+    id:'dsfafasdfads]',
+    name:'blarfdsfffff',
+    cropRatio:'fixed',
+    modal:false,
+    buttons: {
+      rotateLeft:true,
+      rotateRight:true,
+      zoomIn:true,
+      zoomOut:true,
+      preview:false,
+      load:true
+    },
+  }
+  $('.savvi-crop3').savviCrop(args);
 });
 </script>
 </body>

@@ -14,6 +14,7 @@ var SavviCrop = function(options, element, callback) {
 									cropRatio:'fixed',
 									imageData:false,
 									modal:false,
+									editor:true,
 									imageQuality:'1',
 									buttons: {
 										rotateLeft:true,
@@ -482,6 +483,17 @@ SavviCrop.prototype.preInitCrop = function() {
 };
 SavviCrop.prototype.initCrop = function() {
 	var self = this;
+	if (!self.options.editor){
+		var img = $('#img-crop-'+self.options.id).get(0);
+		var blob = self.downsampleImage(img);
+		self.$fileData.val(blob);
+		self.updateStatus('success','Image Attached');
+		self.$fileUpload.val("");
+		self.$uploadPreview.css('background-image','url("'+blob+'")');
+		self.show(self.$uploadClear);
+		self.hide(self.$spinner);
+		return;
+	}
 	if (self.options.modal){
 		$('#sc-modal-'+self.options.id).modal('show');
 		$('#sc-modal-'+self.options.id).off('shown.bs.modal');
@@ -519,17 +531,16 @@ SavviCrop.prototype.initCrop = function() {
 		preview:self.$previewThumb,
 		restore:false,
 		build: function(e) {
-
 			self.undoPreview();
 		},
 		built: function() {
-			var img = self.$el.find('.cropper-canvas img').get(0);
+			var img = $('#img-crop-'+self.options.id).get(0);
 			var isLoaded = img.naturalWidth > 0 ? true : false;
 			if( isLoaded ){
 				self.cropperReady(img);
 			}else{
-				self.$el.find('.cropper-canvas img').one("load", function() {
-					img = self.$el.find('.cropper-canvas img').get(0);
+				$('#img-crop-'+self.options.id).one("load", function() {
+					img = $('#img-crop-'+self.options.id).get(0);
 					self.cropperReady(img);
 				});
 			}
@@ -543,10 +554,10 @@ SavviCrop.prototype.initCrop = function() {
 };
 SavviCrop.prototype.cropperReady = function(img) {
 	var self = this;
-	self.hide( self.$spinner, 400 );
+	self.hide( self.$spinner);
 	self.$imgarea.addClass('active');
-	self.show(self.$previewThumb, 400 );
-	self.show(self.$toolbar, 400 );
+	self.show(self.$previewThumb);
+	self.show(self.$toolbar);
 };
 
 SavviCrop.prototype.updateStatus = function(type,message){

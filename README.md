@@ -35,7 +35,7 @@ var args = {
 };
 $('#some-blank-element').savviCrop(args);
 ```
-## 3. Exponsed Methods
+## 3. Exposed Methods
 ```javascript
 $('#some-blank-element').savviCrop('reset'); /* Reset the cropper from afar */
 ```

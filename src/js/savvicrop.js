@@ -70,6 +70,7 @@ var SavviCrop = function(options, element, callback) {
 	this.$workarea = this.$el.find('.sc-workarea');
 
 	this.init();
+
 };
 
 
@@ -312,7 +313,9 @@ SavviCrop.prototype.rotate = function( dir ){
 };
 SavviCrop.prototype.reset = function() {
 	var self = this;
-	self.$cropper.cropper('reset');
+	if (self.$cropper.cropper){
+		self.$cropper.cropper('reset');
+	}
 	self.$previewCrop.empty();
 	self.hide(self.$previewWrap);
 	//show( '.cropper-point' );
@@ -725,11 +728,23 @@ SavviCrop.prototype.buildToolbar = function(el){
 /* Turn that dingle into a jquery plugin */
 (function($) {
 	$.fn.savviCrop = function(options,callback) {
-		this.each(function() {
-			var savviCrop = new SavviCrop(options, this, callback);
-			return savviCrop;
-		});
+    if (typeof options == 'string'){
+      var savviCrop = $(this).data('savvicrop');
+      switch (options){
+        case 'reset' :
+        	savviCrop.restart();
+        	savviCrop.reset();
+          break;
+      };
+    }else{
+			this.each(function() {
+				var savviCrop = new SavviCrop(options, this, callback);
+				$(this).data('savvicrop',savviCrop);
+				return savviCrop;
+			});
+		}
 	};
 })(jQuery);
+
 
 

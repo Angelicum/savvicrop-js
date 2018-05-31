@@ -16,7 +16,6 @@
   "author": "Uncle Duncan",
   "license": "ISC",
   "dependencies": {
-    "block-ui": "^2.70.1",
     "bootstrap": "^3.3.7",
     "cropper": "^2.3.4",
     "font-awesome": "^4.7.0",

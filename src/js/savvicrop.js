@@ -658,7 +658,7 @@ SavviCrop.prototype.createElements = function(el){
 	m += '</div>';
 
 	if (self.options.modal){
-		n = '';
+	  var n = '';
 	  n += '<div id="sc-modal-'+self.options.id+'" data-id="sc-binder-'+self.options.id+'" class="modal fade '+$(el).attr('class')+'" role="dialog" data-backdrop="static" data-keyboard="false">';
 	  n += '<div class="modal-dialog">';
 	  n += '<div class="modal-content">';

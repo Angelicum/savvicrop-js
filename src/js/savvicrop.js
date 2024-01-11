@@ -68,7 +68,7 @@ var SavviCrop = function(options, element, callback) {
 	this.$previewThumb = this.$el.find('.sc-preview-thumb');
 	this.$previewCrop = this.$el.find('.sc-preview-crop');
 	this.$workarea = this.$el.find('.sc-workarea');
-
+    this.$fileType = null;
 	this.init();
 
 };
@@ -400,13 +400,14 @@ SavviCrop.prototype.downsampleImage = function(img){
 	  canvas.height=ihScaled;
 	  ctx.drawImage(img,0,0,iwScaled,ihScaled);
   }
-  return canvas.toDataURL("image/jpeg",self.options.imageQuality);
+  return canvas.toDataURL(self.$fileType,self.options.imageQuality);
+  //return canvas.toDataURL("image/jpeg",self.options.imageQuality);
 }
 
 SavviCrop.prototype.initFile = function(file) {
 	var self = this;
 	var reader = new FileReader();
-
+    self.$fileType = file.type;
 	self.preInitCrop();
 	if ( file.type !== 'image/png' &&
 			 file.type !== 'image/jpg' &&
@@ -453,7 +454,8 @@ When previewing, make sure to hide the crop points
 */
 SavviCrop.prototype.preview = function() {
 	var self = this;
-	var blob = self.$cropper.cropper('getCroppedCanvas').toDataURL("image/jpeg",self.options.imageQuality);
+	var blob = self.$cropper.cropper('getCroppedCanvas').toDataURL(self.$fileType,self.options.imageQuality);
+    //var blob = self.$cropper.cropper('getCroppedCanvas').toDataURL("image/jpeg",self.options.imageQuality);
 	var img = new Image();
 	img.id = 'img-pv';
 	img.onload = function() {

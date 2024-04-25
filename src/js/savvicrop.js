@@ -382,7 +382,7 @@ SavviCrop.prototype.cropPreview = function() {
 };
 
 SavviCrop.prototype.downsampleImage = function(img){
-	console.log(img.height,img.width);
+	//console.log(img.height,img.width);
 	var self=this;
 	var canvas=document.createElement('canvas');
 	var ctx=canvas.getContext("2d");
@@ -508,7 +508,6 @@ SavviCrop.prototype.initCrop = function() {
 		//$('#sc-modal-'+self.options.id).modal('show');
 		$('#sc-modal-'+self.options.id).off('shown.bs.modal');
 		$('#sc-modal-'+self.options.id).on('shown.bs.modal', function() {
-            console.log('Trigger');
 			$(window).trigger('resize');
 		});
 		$('#sc-modal-'+self.options.id).off('hidden.bs.modal');
@@ -670,7 +669,7 @@ SavviCrop.prototype.createElements = function(el){
 	  n += '<div id="sc-modal-'+self.options.id+'" data-id="sc-binder-'+self.options.id+'" class="modal fade '+$(el).attr('class')+'" role="dialog" data-backdrop="static" data-keyboard="false">';
 	  n += '<div class="modal-dialog modal-xl">';
 	  n += '<div class="modal-content">';
-	  n += '<div class="modal-header">';
+	  n += '<div class="sc-modal-header modal-header">';
 	  n += '<h3 class="modal-title">Image Editor</h3>';
 	  n += '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>';
       n += '</div>';
@@ -683,11 +682,8 @@ SavviCrop.prototype.createElements = function(el){
 	  n += '</div>';
 	  n += '</div>';
 		$('body').append(n);
-        console.log('Element', document.getElementById('sc-modal-'+self.options.id) );
         this.$modal = new bootstrap.Modal(document.getElementById('sc-modal-'+self.options.id))
-        console.log('Modal', this.$modal );
-        console.log('Loaded', self );
-        this.$modal.show();
+        //this.$modal.show();
 	}else{
 		$(el).append('<div data-id="sc-binder-'+self.options.id+'">'+m+'</div>');
 	}

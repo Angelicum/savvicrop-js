@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-js": "uglifyjs src/js/*.js > dist/js/savvicrop.min.js",
-    "build-css": "sass --style=compressed --no-source-map src/scss/savvicrop.scss dist/css/savvicrop.css",
+    "build-css": "node-sass --include-path scss src/scss/savvicrop.scss  dist/css/savvicrop.css",
     "build": "npm run build-js && npm run build-css"
   },
   "repository": {
@@ -16,14 +16,13 @@
   "author": "Uncle Duncan",
   "license": "ISC",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.5.2",
     "bootstrap": "^5.3.3",
     "cropper": "^2.3.4",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.1.1",
-    "sass": "^1.75.0"
+    "jquery": "^3.1.1"
   },
   "devDependencies": {
+    "node-sass": "^3.10.1",
     "uglify-js": "^2.7.4"
   }
 }

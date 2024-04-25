@@ -69,15 +69,16 @@ var SavviCrop = function(options, element, callback) {
 	this.$previewCrop = this.$el.find('.sc-preview-crop');
 	this.$workarea = this.$el.find('.sc-workarea');
     this.$fileType = null;
+
+    this.$modal;
 	this.init();
 
 };
 
-
 SavviCrop.prototype.checkIncludes = function() {
   var isOkay = true;
   if (!window.jQuery) { console.log('[-] Error: jQuery is not installed.'); isOkay = false;}
-  if (!$.isFunction($.fn.modal)) { console.log('[-] Error: bootstrap is not installed.'); isOkay = false;}
+  if (! typeof bootstrap.Modal == 'function') { console.log('[-] Error: bootstrap is not installed.'); isOkay = false;}
   return isOkay;
 };
 
@@ -191,12 +192,14 @@ SavviCrop.prototype.init = function(){
 					self.show( self.$cropperCropBox);
 					self.saveCropped();
 					if (self.options.modal){
-						$('#sc-modal-'+self.options.id).modal('hide');
+                        self.$modal.hide();
+						//$('#sc-modal-'+self.options.id).modal('hide');
 					}
 				break;
 				case 'toolbar-load':
 					if (self.options.modal){
-						$('#sc-modal-'+self.options.id).modal('hide');
+						self.$modal.hide();
+                        //$('#sc-modal-'+self.options.id).modal('hide');
 					}
 					self.restart();
 				break;
@@ -252,7 +255,8 @@ SavviCrop.prototype.init = function(){
 			self.show( self.$cropperCropBox);
 			self.saveCropped();
 			if (self.options.modal){
-				$('#sc-modal-'+self.options.id).modal('hide');
+                self.$modal.hide();
+				//$('#sc-modal-'+self.options.id).modal('hide');
 			}
 		});
 	}
@@ -500,9 +504,11 @@ SavviCrop.prototype.initCrop = function() {
 		return;
 	}
 	if (self.options.modal){
-		$('#sc-modal-'+self.options.id).modal('show');
+        self.$modal.show();
+		//$('#sc-modal-'+self.options.id).modal('show');
 		$('#sc-modal-'+self.options.id).off('shown.bs.modal');
 		$('#sc-modal-'+self.options.id).on('shown.bs.modal', function() {
+            console.log('Trigger');
 			$(window).trigger('resize');
 		});
 		$('#sc-modal-'+self.options.id).off('hidden.bs.modal');
@@ -662,12 +668,12 @@ SavviCrop.prototype.createElements = function(el){
 	if (self.options.modal){
 	  var n = '';
 	  n += '<div id="sc-modal-'+self.options.id+'" data-id="sc-binder-'+self.options.id+'" class="modal fade '+$(el).attr('class')+'" role="dialog" data-backdrop="static" data-keyboard="false">';
-	  n += '<div class="modal-dialog">';
+	  n += '<div class="modal-dialog modal-xl">';
 	  n += '<div class="modal-content">';
 	  n += '<div class="modal-header">';
-	  n += '<button type="button" class="close" data-dismiss="modal">&times;</button>';
 	  n += '<h3 class="modal-title">Image Editor</h3>';
-	  n += '</div>';
+	  n += '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>';
+      n += '</div>';
 	  n += '<div class="modal-body">' + m;
 	  n += '</div>'; /* .modal-body */
 	  n += '<div class="modal-footer">';
@@ -677,6 +683,11 @@ SavviCrop.prototype.createElements = function(el){
 	  n += '</div>';
 	  n += '</div>';
 		$('body').append(n);
+        console.log('Element', document.getElementById('sc-modal-'+self.options.id) );
+        this.$modal = new bootstrap.Modal(document.getElementById('sc-modal-'+self.options.id))
+        console.log('Modal', this.$modal );
+        console.log('Loaded', self );
+        this.$modal.show();
 	}else{
 		$(el).append('<div data-id="sc-binder-'+self.options.id+'">'+m+'</div>');
 	}

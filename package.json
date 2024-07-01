@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:savvior/savvicrop-js.git"
+    "url": "git@github.com:Angelicum/savvicrop-js.git"
   },
   "author": "Uncle Duncan",
   "license": "ISC",
